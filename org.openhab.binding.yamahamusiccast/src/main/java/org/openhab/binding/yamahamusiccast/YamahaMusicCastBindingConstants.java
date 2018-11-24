@@ -20,7 +20,7 @@ public class YamahaMusicCastBindingConstants {
     public static final String BINDING_ID = "yamahamusiccast";
 
     // List of all Thing Type UIDs
-    public final static ThingTypeUID THING_TYPE_SAMPLE = new ThingTypeUID(BINDING_ID, "speaker");
+    public final static ThingTypeUID THING_TYPE_SPEAKER = new ThingTypeUID(BINDING_ID, "speaker");
 
     // List of all Channel ids
     public final static String POWER = "power";

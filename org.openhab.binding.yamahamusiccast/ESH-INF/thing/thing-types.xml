@@ -7,7 +7,7 @@
     <!-- Sample Thing Type -->
     <thing-type id="speaker">
         <label>YamahaMusicCast Speaker</label>
-        <description>Sample thing for YamahaMusicCast Binding</description>
+        <description>A Yamaha MusicCast speaker</description>
 
         <channels>
             <channel id="volume" typeId="volume"/>

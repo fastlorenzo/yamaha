@@ -7,6 +7,7 @@
  */
 package org.openhab.binding.yamahamusiccast.handler;
 
+import static org.eclipse.smarthome.core.types.RefreshType.REFRESH;
 import static org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants.*;
 
 import java.io.BufferedReader;
@@ -14,6 +15,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -21,11 +23,20 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.State;
+import org.openhab.binding.yamahamusiccast.internal.api.MusicCastException;
+import org.openhab.binding.yamahamusiccast.internal.api.MusicCastRequest;
+import org.openhab.binding.yamahamusiccast.internal.api.model.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 /**
- * The {@link YamahaMusicCastHandler} is responsible for handling commands, which are
+ * The {@link YamahaMusicCastHandler} is responsibhe type org.eclipse.jdt.annotation.NonNullByDefault cannot be
+ * resolved. le for handling commands, which are
  * sent to one of the channels.
  *
  * @author Frank Zimmer - Initial contribution
@@ -37,22 +48,85 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private static String ON = "on";
     private static String OFF = "standby";
 
+    private HttpClient httpClient;
+    private Gson gson;
+    private Status state;
+
     public YamahaMusicCastHandler(Thing thing) {
         super(thing);
         host = (String) getConfig().get("host");
+        this.httpClient = new HttpClient();
+        this.httpClient.setFollowRedirects(false);
+        this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+
+        // .registerTypeAdapter(Status.class, new TidyLowerCaseStringDeserializer()).create();
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        if (channelUID.getId().equals(POWER)) {
-            if (command.equals(OnOffType.ON)) {
-                postPowerState(ON);
-            } else if (command.equals(OnOffType.OFF)) {
-                postPowerState(OFF);
+        logger.debug("Handling command = {} for channel = {}", command, channelUID);
+        if (command == REFRESH) {
+            refresh(channelUID);
+        } else {
+            if (channelUID.getId().equals(POWER)) {
+                if (command.equals(OnOffType.ON)) {
+                    postPowerState(ON);
+                } else if (command.equals(OnOffType.OFF)) {
+                    postPowerState(OFF);
+                }
+            }
+            if (channelUID.getId().equals(VOLUME)) {
+                postVolumeState(command.toString());
             }
         }
-        if (channelUID.getId().equals(VOLUME)) {
-            postVolumeState(command.toString());
+    }
+
+    private void refresh() {
+        logger.info("Trying to connect to " + host);
+        try {
+            if (!httpClient.isStarted()) {
+                try {
+                    logger.info("Connecting to host.");
+                    httpClient.start();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    logger.info("Failed to start HTTP client");
+                    e.printStackTrace();
+                }
+            }
+            MusicCastRequest<Status> statusRequest = newRequest(Status.class);
+            statusRequest.setPath("/YamahaExtendedControl/v1/main/getStatus");
+            logger.info("Requesting ....");
+            state = statusRequest.execute();
+            if (state != null) {
+                logger.info("Result is " + state.toString());
+            }
+        } catch (MusicCastException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            logger.info(e.toString());
+        }
+
+    }
+
+    private void refresh(ChannelUID channelUID) {
+        logger.info("Refresh Channel " + channelUID.getAsString());
+        refresh();
+        logger.info("Refreshed everything.");
+        String channelID = channelUID.getId();
+        State result = null;
+        if (state != null) {
+            switch (channelID) {
+                case VOLUME:
+                    result = new PercentType(state.getVolume() * 100 / state.getMax_volume());
+                    break;
+                case POWER:
+                    result = OnOffType.from(state.getPower());
+                    break;
+            }
+        }
+        if (result != null) {
+            updateState(channelID, result);
         }
     }
 
@@ -151,5 +225,9 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
             updateStatus(ThingStatus.OFFLINE);
         }
 
+    }
+
+    private <T> MusicCastRequest<T> newRequest(Class<T> responseType) {
+        return new MusicCastRequest<T>(responseType, gson, httpClient, host, 80);
     }
 }

@@ -26,7 +26,7 @@ import org.eclipse.smarthome.core.thing.binding.ThingHandler;
  */
 public class YamahaMusicCastHandlerFactory extends BaseThingHandlerFactory {
     
-    private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SAMPLE);
+    private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SPEAKER);
     
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
@@ -38,7 +38,7 @@ public class YamahaMusicCastHandlerFactory extends BaseThingHandlerFactory {
 
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-        if (thingTypeUID.equals(THING_TYPE_SAMPLE)) {
+        if (thingTypeUID.equals(THING_TYPE_SPEAKER)) {
             return new YamahaMusicCastHandler(thing);
         }
 
