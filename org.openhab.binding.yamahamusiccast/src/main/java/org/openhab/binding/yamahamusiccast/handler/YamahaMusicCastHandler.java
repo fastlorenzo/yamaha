@@ -7,6 +7,9 @@
  */
 package org.openhab.binding.yamahamusiccast.handler;
 
+import static org.eclipse.smarthome.core.thing.ThingStatus.OFFLINE;
+import static org.eclipse.smarthome.core.thing.ThingStatus.ONLINE;
+import static org.eclipse.smarthome.core.thing.ThingStatusDetail.*;
 import static org.eclipse.smarthome.core.types.RefreshType.REFRESH;
 import static org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants.*;
 
@@ -14,14 +17,21 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
+import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
+import org.eclipse.smarthome.core.thing.ThingStatusDetail;
+import org.eclipse.smarthome.core.thing.ThingStatusInfo;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
+import org.eclipse.smarthome.core.thing.binding.builder.ThingStatusInfoBuilder;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastException;
@@ -51,6 +61,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private HttpClient httpClient;
     private Gson gson;
     private Status state;
+    private @Nullable ScheduledFuture<?> refreshJob;
 
     public YamahaMusicCastHandler(Thing thing) {
         super(thing);
@@ -81,7 +92,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         }
     }
 
-    private void refresh() {
+    private void getUpdate() {
         logger.info("Trying to connect to " + host);
         try {
             if (!httpClient.isStarted()) {
@@ -111,7 +122,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
 
     private void refresh(ChannelUID channelUID) {
         logger.info("Refresh Channel " + channelUID.getAsString());
-        refresh();
+        getUpdate();
         logger.info("Refreshed everything.");
         String channelID = channelUID.getId();
         State result = null;
@@ -225,6 +236,63 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
             updateStatus(ThingStatus.OFFLINE);
         }
 
+    }
+
+    @Override
+    protected void updateStatus(ThingStatus status, ThingStatusDetail statusDetail, @Nullable String description) {
+        if (status == ONLINE || (status == OFFLINE && statusDetail == COMMUNICATION_ERROR)) {
+            scheduleRefreshJob();
+        } else if (status == OFFLINE && statusDetail == CONFIGURATION_ERROR) {
+            cancelRefreshJob();
+        }
+        // mgb: update the status only if it's changed
+        ThingStatusInfo statusInfo = ThingStatusInfoBuilder.create(status, statusDetail).withDescription(description)
+                .build();
+        if (!statusInfo.equals(getThing().getStatusInfo())) {
+            super.updateStatus(status, statusDetail, description);
+        }
+    }
+
+    private void refresh() throws MusicCastException {
+        logger.debug("Refreshing the MusicCast speaker {}", getThing().getUID());
+        getUpdate();
+        for (Channel channel : getThing().getChannels()) {
+            ChannelUID channelUID = channel.getUID();
+            refresh(channelUID);
+        }
+    }
+
+    private void run() {
+        try {
+            logger.trace("Executing refresh job");
+            refresh();
+            updateStatus(ONLINE);
+        } catch (Exception e) {
+            logger.warn("Unhandled exception while refreshing the Yamaha MusicCast Speaker {} - {}",
+                    getThing().getUID(), e.getMessage());
+            updateStatus(OFFLINE, COMMUNICATION_ERROR, e.getMessage());
+        }
+    }
+
+    // Private API
+
+    private void scheduleRefreshJob() {
+        synchronized (this) {
+            if (refreshJob == null) {
+                logger.debug("Scheduling refresh job every {}s", 1);
+                refreshJob = scheduler.scheduleWithFixedDelay(this::run, 0, 1, TimeUnit.SECONDS);
+            }
+        }
+    }
+
+    private void cancelRefreshJob() {
+        synchronized (this) {
+            if (refreshJob != null) {
+                logger.debug("Cancelling refresh job");
+                refreshJob.cancel(true);
+                refreshJob = null;
+            }
+        }
     }
 
     private <T> MusicCastRequest<T> newRequest(Class<T> responseType) {
