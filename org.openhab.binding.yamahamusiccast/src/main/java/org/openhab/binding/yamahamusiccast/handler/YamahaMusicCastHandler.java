@@ -34,6 +34,7 @@ import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.builder.ThingStatusInfoBuilder;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
+import org.openhab.binding.yamahamusiccast.internal.YamahaMusicCastThingConfig;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastException;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastRequest;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Status;
@@ -62,6 +63,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private Gson gson;
     private Status state;
     private @Nullable ScheduledFuture<?> refreshJob;
+    private @Nullable YamahaMusicCastThingConfig config;
 
     public YamahaMusicCastHandler(Thing thing) {
         super(thing);
@@ -145,6 +147,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     public void initialize() {
         // TODO: Initialize the thing. If done set status to ONLINE to indicate proper working.
         // Long running initialization should be done asynchronously in background.
+        config = getConfig().as(YamahaMusicCastThingConfig.class);
         updateStatus(ThingStatus.ONLINE);
 
         // Note: When initialization can NOT be done set the status with more details for further
@@ -280,7 +283,8 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         synchronized (this) {
             if (refreshJob == null) {
                 logger.debug("Scheduling refresh job every {}s", 1);
-                refreshJob = scheduler.scheduleWithFixedDelay(this::run, 0, 1, TimeUnit.SECONDS);
+                refreshJob = scheduler.scheduleWithFixedDelay(this::run, 0, config.getRefreshInterval(),
+                        TimeUnit.SECONDS);
             }
         }
     }

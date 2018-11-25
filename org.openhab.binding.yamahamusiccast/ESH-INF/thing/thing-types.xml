@@ -20,6 +20,11 @@
                 <default>192.168.2.x</default>
                 <description>YAMAHA MusicCast Device host address</description>
             </parameter>
+            <parameter name="refresh" type="integer" required="true">
+                <label>Refresh interval</label>
+                <default>10</default>
+                <description>Time between two updates from the MusicCast device. Unit: seconds.</description>
+            </parameter>
         
         </config-description>    
     </thing-type>
