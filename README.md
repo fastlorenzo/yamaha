@@ -27,3 +27,4 @@ Currently, the following channels are available:
 
 * **Power** Channel indicating the speaker is on or off
 * **Volume** Current sound volume (percentage of maximum)
+* **Mute** Switch indicating the speaker is muted or not.
