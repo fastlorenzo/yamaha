@@ -20,7 +20,6 @@ import java.util.concurrent.TimeoutException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpResponseException;
 import org.eclipse.jetty.client.api.ContentProvider;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
@@ -30,6 +29,7 @@ import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.http.MimeTypes;
+import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +99,7 @@ public class MusicCastRequest<T> {
         this.queryParameters.put(key, String.valueOf(value));
     }
 
-    public @Nullable T execute() throws MusicCastException {
+    public <@Nullable T extends @Nullable Response> @Nullable T execute() throws MusicCastException {
         T result = null;
         String json = getContent();
         logger.info("JSON is " + json);
@@ -111,12 +111,60 @@ public class MusicCastRequest<T> {
                 logger.info("JsonObject has Property data");
                 if (jsonObject.get(PROPERTY_DATA).isJsonArray()) {
                     logger.info("Object is array.");
-                    result = gson.fromJson(jsonObject.getAsJsonArray(PROPERTY_DATA), resultType);
+                    result = (T) gson.fromJson(jsonObject.getAsJsonArray(PROPERTY_DATA), resultType);
                 } else {
-                    result = gson.fromJson(jsonObject.getAsJsonObject(PROPERTY_DATA), resultType);
+                    result = (T) gson.fromJson(jsonObject.getAsJsonObject(PROPERTY_DATA), resultType);
                 }
             } else {
-                result = gson.fromJson(json, resultType);
+                result = (T) gson.fromJson(json, resultType);
+                // Check the result type and throw an exception if not succesful
+                /**
+                 * code description
+                 * 0 Successful request
+                 * 1 Initializing
+                 * 2 Internal Error
+                 * 3 Invalid Request (A method did not exist, a method wasn’t appropriate etc.)
+                 * 4 Invalid Parameter (Out of range, invalid characters etc.)
+                 * 5 Guarded (Unable to setup in current status etc.)
+                 * 6 Time Out
+                 * 99 Firmware Updating
+                 * (100s are Streaming Service related errors)
+                 * 100 Access Error
+                 */
+                switch (result.getResponse_code()) {
+                    case 0: {
+                        // Great
+                        break;
+                    }
+                    case 1: {
+                        throw new MusicCastException("Initializing");
+                    }
+                    case 2: {
+                        throw new MusicCastException("Internal Error");
+                    }
+                    case 3: {
+                        throw new MusicCastException(
+                                "Invalid Request (A method did not exist, a method wasn’t appropriate etc.)");
+                    }
+                    case 4: {
+                        throw new MusicCastException("Invalid Parameter (Out of range, invalid characters etc.)");
+                    }
+                    case 5: {
+                        throw new MusicCastException("Guarded (Unable to setup in current status etc.)");
+                    }
+                    case 6: {
+                        throw new MusicCastException("Timeout");
+                    }
+                    case 99: {
+                        throw new MusicCastException("Firmware Updating");
+                    }
+                    case 100: {
+                        throw new MusicCastException("Access Error");
+                    }
+                    default: {
+                        throw new MusicCastException("Unknown MusicCast id : " + result.getResponse_code());
+                    }
+                }
             }
         } else {
             logger.error("ResultType is void!");
@@ -149,7 +197,7 @@ public class MusicCastRequest<T> {
 
     private ContentResponse getContentResponse() throws MusicCastException {
         Request request = newRequest();
-        logger.trace(">> {} {}", request.getMethod(), request.getURI());
+        logger.debug(">> {} {}", request.getMethod(), request.getURI());
         ContentResponse response;
         try {
             response = request.send();
@@ -160,13 +208,6 @@ public class MusicCastRequest<T> {
             Throwable cause = e.getCause();
             if (cause instanceof ConnectException) {
                 throw new MusicCastException(cause);
-            } else if (cause instanceof HttpResponseException
-                    && ((HttpResponseException) cause).getResponse() instanceof ContentResponse) {
-                // the UniFi controller violates the HTTP protocol
-                // - it returns 401 UNAUTHORIZED without the WWW-Authenticate response header
-                // - this causes an ExceptionException to be thrown
-                // - we unwrap the response from the exception for proper handling of the 401 status code
-                response = (ContentResponse) ((HttpResponseException) cause).getResponse();
             } else {
                 throw new MusicCastException(cause);
             }

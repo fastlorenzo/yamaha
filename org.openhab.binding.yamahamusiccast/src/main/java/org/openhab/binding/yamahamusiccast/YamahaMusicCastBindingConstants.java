@@ -25,5 +25,6 @@ public class YamahaMusicCastBindingConstants {
     // List of all Channel ids
     public final static String POWER = "power";
     public final static String VOLUME = "volume";
+    public final static String MUTE = "mute";
 
 }

@@ -13,10 +13,6 @@ import static org.eclipse.smarthome.core.thing.ThingStatusDetail.*;
 import static org.eclipse.smarthome.core.types.RefreshType.REFRESH;
 import static org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants.*;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +33,7 @@ import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.yamahamusiccast.internal.YamahaMusicCastThingConfig;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastException;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastRequest;
+import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +43,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 /**
- * The {@link YamahaMusicCastHandler} is responsibhe type org.eclipse.jdt.annotation.NonNullByDefault cannot be
- * resolved. le for handling commands, which are
+ * The {@link YamahaMusicCastHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Frank Zimmer - Initial contribution
+ * @author Dries Decock - Adding extra channels and refresh from speaker
  */
 public class YamahaMusicCastHandler extends BaseThingHandler {
 
@@ -71,8 +68,6 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         this.httpClient = new HttpClient();
         this.httpClient.setFollowRedirects(false);
         this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-
-        // .registerTypeAdapter(Status.class, new TidyLowerCaseStringDeserializer()).create();
     }
 
     @Override
@@ -81,21 +76,43 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         if (command == REFRESH) {
             refresh(channelUID);
         } else {
-            if (channelUID.getId().equals(POWER)) {
-                if (command.equals(OnOffType.ON)) {
-                    postPowerState(ON);
-                } else if (command.equals(OnOffType.OFF)) {
-                    postPowerState(OFF);
-                }
-            }
-            if (channelUID.getId().equals(VOLUME)) {
-                postVolumeState(command.toString());
+            switch (channelUID.getId()) {
+                case POWER:
+                    if (command.equals(OnOffType.ON)) {
+                        postPowerState(ON);
+                    } else if (command.equals(OnOffType.OFF)) {
+                        postPowerState(OFF);
+                    }
+                    break;
+                case VOLUME:
+                    postVolumeState(command.toString());
+                    break;
             }
         }
     }
 
+    private void setValue(String url, String key, String value) throws MusicCastException {
+        if (!httpClient.isStarted()) {
+            try {
+                logger.info("Connecting to host.");
+                httpClient.start();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                logger.info("Failed to start HTTP client");
+                e.printStackTrace();
+            }
+        }
+        MusicCastRequest<Response> setRequest = newRequest(Response.class);
+        setRequest.setPath(url);
+        setRequest.setQueryParameter(key, value);
+        logger.info("Requesting ....");
+        Response response = setRequest.execute();
+        if (response != null) {
+            logger.info("Result is " + response.toString());
+        }
+    }
+
     private void getUpdate() {
-        logger.info("Trying to connect to " + host);
         try {
             if (!httpClient.isStarted()) {
                 try {
@@ -108,7 +125,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                 }
             }
             MusicCastRequest<Status> statusRequest = newRequest(Status.class);
-            statusRequest.setPath("/YamahaExtendedControl/v1/main/getStatus");
+            statusRequest.setPath(Status.url);
             logger.info("Requesting ....");
             state = statusRequest.execute();
             if (state != null) {
@@ -119,7 +136,6 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
             e.printStackTrace();
             logger.info(e.toString());
         }
-
     }
 
     private void refresh(ChannelUID channelUID) {
@@ -135,6 +151,9 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                     break;
                 case POWER:
                     result = OnOffType.from(state.getPower());
+                    break;
+                case MUTE:
+                    result = OnOffType.from(state.isMute());
                     break;
             }
         }
@@ -159,86 +178,24 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     }
 
     private void postPowerState(String state) {
-
-        String urlString = "http://" + host + "/YamahaExtendedControl/v1/main/setPower?power=" + state;
-        logger.debug(urlString);
         try {
-
-            // Create HTTP GET request
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            // connection.setDoOutput(true);
-            connection.setRequestMethod("GET");
-            int responseCode = connection.getResponseCode();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            // print result
-            logger.debug(response.toString());
-
-            logger.debug("YAMAHA: " + responseCode + "; " + connection.getResponseMessage());
-            // Process response
-            if (responseCode == 200) {
-                if (state.equals(ON)) {
-                    updateState(POWER, OnOffType.ON);
-                } else if (state.equals(OFF)) {
-                    updateState(POWER, OnOffType.OFF);
-                    updateStatus(ThingStatus.ONLINE);
-                }
-            }
-            logger.debug("Update of {} : {} to {}", this.getThing().getUID(), POWER, state);
-
-        } catch (Exception e) {
-            logger.warn("Unable to post state: " + e.getMessage(), e);
-            updateStatus(ThingStatus.OFFLINE);
+            setValue("/YamahaExtendedControl/v2/main/setPower", "power", state);
+            refresh();
+        } catch (MusicCastException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
     }
 
     private void postVolumeState(String volume) {
-
-        String urlString = "http://" + host + "/YamahaExtendedControl/v1/main/setVolume?volume=" + volume;
-        logger.debug(urlString);
         try {
-
-            // Create HTTP GET request
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            int responseCode = connection.getResponseCode();
-
-            logger.debug("YAMAHA: " + responseCode);
-            // Process response
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            // print result
-            logger.debug(response.toString());
-
-            updateState(VOLUME, new PercentType(volume));
-
-            logger.debug("Update of {} : {} to {}", this.getThing().getUID(), POWER, volume);
-
-            updateStatus(ThingStatus.ONLINE);
-
-        } catch (Exception e) {
-            logger.warn("Unable to post state: " + e.getMessage(), e);
-            updateStatus(ThingStatus.OFFLINE);
+            setValue("/YamahaExtendedControl/v2/main/setVolume", "volume", volume);
+            refresh();
+        } catch (MusicCastException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-
     }
 
     @Override

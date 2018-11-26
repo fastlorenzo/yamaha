@@ -1,11 +1,7 @@
 package org.openhab.binding.yamahamusiccast.internal.api.model;
 
-public class Status {
-    protected Integer response_code;
-
-    public Integer getResponse_code() {
-        return response_code;
-    }
+public class Status extends Response {
+    public final static String url = "/YamahaExtendedControl/v2/main/getStatus";
 
     public String getPower() {
         return power;
