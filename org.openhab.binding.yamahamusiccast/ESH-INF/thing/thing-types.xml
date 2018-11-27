@@ -10,9 +10,12 @@
 		<description>A Yamaha MusicCast speaker (wx-030, ...) </description>
 
 		<channels>
+            <channel id="model_name" typeId="model_name" />
 			<channel id="volume" typeId="volume" />
 			<channel id="power" typeId="power" />
 			<channel id="mute" typeId="mute" />
+			<channel id="input" typeId="input" />
+			<channel id="album_art" typeId="album_art" ></channel>
 		</channels>
 
 		<config-description>
@@ -46,7 +49,22 @@
 		<item-type>Switch</item-type>
 		<label>Mute</label>
 		<description>Speaker muted</description>
-		<state readOnly="true"></state>
+	</channel-type>
+	<channel-type id="input">
+		<item-type>String</item-type>
+		<label>Input</label>
+		<description>Current speaker input</description>
+	</channel-type>
+	<channel-type id="model_name">
+	   <item-type>String</item-type>
+	   <label>Model</label>
+	   <description>Yamaha Speaker Model</description>
+	</channel-type>
+	<channel-type id="album_art">
+	   <item-type>Image</item-type>
+	   <label>Album art</label>
+	   <description>Current album art.</description>
+	   <state readOnly="true"></state>
 	</channel-type>
 
 </thing:thing-descriptions>

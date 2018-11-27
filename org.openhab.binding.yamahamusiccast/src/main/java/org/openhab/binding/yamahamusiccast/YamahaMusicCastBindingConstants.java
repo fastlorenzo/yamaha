@@ -26,5 +26,8 @@ public class YamahaMusicCastBindingConstants {
     public final static String POWER = "power";
     public final static String VOLUME = "volume";
     public final static String MUTE = "mute";
+    public final static String INPUT = "input";
+    public final static String MODEL_NAME = "model_name";
+    public final static String ALBUM_ART = "album_art";
 
 }

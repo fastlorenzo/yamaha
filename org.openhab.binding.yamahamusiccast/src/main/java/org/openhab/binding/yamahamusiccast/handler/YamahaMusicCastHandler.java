@@ -13,6 +13,11 @@ import static org.eclipse.smarthome.core.thing.ThingStatusDetail.*;
 import static org.eclipse.smarthome.core.types.RefreshType.REFRESH;
 import static org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +25,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
+import org.eclipse.smarthome.core.library.types.RawType;
+import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -33,6 +40,8 @@ import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.yamahamusiccast.internal.YamahaMusicCastThingConfig;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastException;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastRequest;
+import org.openhab.binding.yamahamusiccast.internal.api.model.DeviceInfo;
+import org.openhab.binding.yamahamusiccast.internal.api.model.PlayInfo;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Status;
 import org.slf4j.Logger;
@@ -58,7 +67,9 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
 
     private HttpClient httpClient;
     private Gson gson;
+    private DeviceInfo info;
     private Status state;
+    private PlayInfo playInfo;
     private @Nullable ScheduledFuture<?> refreshJob;
     private @Nullable YamahaMusicCastThingConfig config;
 
@@ -68,6 +79,9 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         this.httpClient = new HttpClient();
         this.httpClient.setFollowRedirects(false);
         this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+        state = null;
+        info = null;
+        playInfo = null;
     }
 
     @Override
@@ -84,6 +98,15 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                         postPowerState(OFF);
                     }
                     break;
+                case MUTE:
+                    if (command.equals(OnOffType.ON)) {
+                        postMuteState("true");
+                    } else if (command.equals(OnOffType.OFF)) {
+                        postMuteState("false");
+                    }
+                    break;
+                case INPUT:
+                    postInput(command.toString());
                 case VOLUME:
                     postVolumeState(command.toString());
                     break;
@@ -124,6 +147,11 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                     e.printStackTrace();
                 }
             }
+            if (info == null) {
+                MusicCastRequest<DeviceInfo> infoRequest = newRequest(DeviceInfo.class);
+                infoRequest.setPath(DeviceInfo.url);
+                info = infoRequest.execute();
+            }
             MusicCastRequest<Status> statusRequest = newRequest(Status.class);
             statusRequest.setPath(Status.url);
             logger.info("Requesting ....");
@@ -131,6 +159,10 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
             if (state != null) {
                 logger.info("Result is " + state.toString());
             }
+            MusicCastRequest<PlayInfo> playInfoRequest = newRequest(PlayInfo.class);
+            playInfoRequest.setPath(PlayInfo.url);
+            playInfo = playInfoRequest.execute();
+
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -154,6 +186,27 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                     break;
                 case MUTE:
                     result = OnOffType.from(state.isMute());
+                    break;
+                case INPUT:
+                    result = StringType.valueOf(state.getInput());
+                    break;
+                case MODEL_NAME:
+                    result = StringType.valueOf(info.getModel_name());
+                    break;
+                case ALBUM_ART:
+                    String urlString = "http://" + host + playInfo.getAlbumart_url();
+                    URL url;
+                    try {
+                        url = new URL(urlString);
+                        result = new RawType(readImage(url).toByteArray(), "image/jpeg");
+                    } catch (MalformedURLException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
                     break;
             }
         }
@@ -188,9 +241,29 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
 
     }
 
+    private void postInput(String input) {
+        try {
+            setValue("/YamahaExtendedControl/v2/main/setInput", "input", input);
+            refresh();
+        } catch (MusicCastException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     private void postVolumeState(String volume) {
         try {
             setValue("/YamahaExtendedControl/v2/main/setVolume", "volume", volume);
+            refresh();
+        } catch (MusicCastException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    private void postMuteState(String mute) {
+        try {
+            setValue("/YamahaExtendedControl/v2/main/setMute", "enable", mute);
             refresh();
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
@@ -258,5 +331,29 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
 
     private <T> MusicCastRequest<T> newRequest(Class<T> responseType) {
         return new MusicCastRequest<T>(responseType, gson, httpClient, host, 80);
+    }
+
+    private static ByteArrayOutputStream readImage(URL url) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        java.net.URI uri = url.toURI();
+        InputStream is = null;
+        try {
+            is = url.openStream();
+            byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+            int n;
+
+            while ((n = is.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
+        } catch (IOException e) {
+            System.err.printf("Failed while reading bytes from %s: %s", url.toExternalForm(), e.getMessage());
+            e.printStackTrace();
+            // Perform any other exception handling that's appropriate.
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+        return baos;
     }
 }
