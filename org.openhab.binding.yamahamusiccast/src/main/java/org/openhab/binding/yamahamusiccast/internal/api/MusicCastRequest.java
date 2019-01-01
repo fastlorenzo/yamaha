@@ -1,4 +1,3 @@
-package org.openhab.binding.yamahamusiccast.internal.api;
 /**
  * Copyright (c) 2010-2018 by the respective copyright holders.
  *
@@ -7,6 +6,8 @@ package org.openhab.binding.yamahamusiccast.internal.api;
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
+package org.openhab.binding.yamahamusiccast.internal.api;
 
 import java.net.ConnectException;
 import java.nio.charset.Charset;
