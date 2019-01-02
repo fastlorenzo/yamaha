@@ -288,7 +288,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     @Override
     protected void updateStatus(ThingStatus status, ThingStatusDetail statusDetail, @Nullable String description) {
         if (status == ONLINE || (status == OFFLINE && statusDetail == COMMUNICATION_ERROR)) {
-            scheduleRefreshJob();
+            //scheduleRefreshJob();
         } else if (status == OFFLINE && statusDetail == CONFIGURATION_ERROR) {
             cancelRefreshJob();
         }
@@ -327,8 +327,8 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         synchronized (this) {
             if (refreshJob == null) {
                 logger.debug("Scheduling refresh job every {}s", 1);
-                refreshJob = scheduler.scheduleWithFixedDelay(this::run, 0, config.getRefreshInterval(),
-                        TimeUnit.SECONDS);
+                //refreshJob = scheduler.scheduleWithFixedDelay(this::run, 0, config.getRefreshInterval(),
+                //        TimeUnit.SECONDS);
             }
         }
     }
