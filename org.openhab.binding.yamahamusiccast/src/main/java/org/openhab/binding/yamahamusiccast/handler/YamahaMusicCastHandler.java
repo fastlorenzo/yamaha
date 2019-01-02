@@ -108,6 +108,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                     break;
                 case INPUT:
                     postInput(command.toString());
+                    break;
                 case VOLUME:
                     postVolumeState(command.toString());
                     break;
