@@ -20,7 +20,7 @@ public class YamahaMusicCastThingConfig {
     /**
      * RefreshInterval in seconds.
      */
-    private int refresh = 3600;
+    private int refresh = 540;
 
     private String host = "yamaha";
 

@@ -40,7 +40,7 @@ public class YamahaDiscoveryParticipant implements UpnpDiscoveryParticipant {
     private final Logger logger = LoggerFactory.getLogger(YamahaDiscoveryParticipant.class);
 
     private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections
-            .singleton(YamahaMusicCastBindingConstants.BRIDGE_THING_TYPE);
+            .singleton(YamahaMusicCastBindingConstants.THING_TYPE_SPEAKER);
 
     @Override
     public Set<ThingTypeUID> getSupportedThingTypeUIDs() {
@@ -88,9 +88,9 @@ public class YamahaDiscoveryParticipant implements UpnpDiscoveryParticipant {
             return null;
         }
 
-        if (manufacturer.toUpperCase().contains(YamahaMusicCastBindingConstants.UPNP_MANUFACTURER)
-                && deviceType.equals(YamahaMusicCastBindingConstants.UPNP_TYPE)) {
-            return new ThingUID(YamahaMusicCastBindingConstants.BRIDGE_THING_TYPE, udn);
+        if (manufacturer/* .toUpperCase() */.contains(YamahaMusicCastBindingConstants.DESC_MANUFACTURER)
+                && deviceType.equals(YamahaMusicCastBindingConstants.DESC_DEVICE_TYPE)) {
+            return new ThingUID(YamahaMusicCastBindingConstants.THING_TYPE_SPEAKER, udn);
         } else {
             return null;
         }

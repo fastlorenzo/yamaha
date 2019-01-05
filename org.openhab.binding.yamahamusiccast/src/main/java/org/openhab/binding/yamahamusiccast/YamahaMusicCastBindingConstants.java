@@ -24,22 +24,18 @@ public class YamahaMusicCastBindingConstants {
 
     public static final String BINDING_ID = "yamahamusiccast";
 
-    public static final ThingTypeUID BRIDGE_THING_TYPE = new ThingTypeUID(BINDING_ID, "speaker");
-    public static final ThingTypeUID ZONE_THING_TYPE = new ThingTypeUID(BINDING_ID, "zone");
-
-    public static final Set<ThingTypeUID> BRIDGE_THING_TYPES_UIDS = Collections.singleton(BRIDGE_THING_TYPE);
-    public static final Set<ThingTypeUID> ZONE_THING_TYPES_UIDS = Collections.singleton(ZONE_THING_TYPE);
-
-    // For the backwards compatibility...
-    public final static ThingTypeUID THING_TYPE_SPEAKER = BRIDGE_THING_TYPE;
+    // List all Thing Type UIDs, related to the YamahaMusicCast Binding
+    public static final ThingTypeUID THING_TYPE_SPEAKER = new ThingTypeUID(BINDING_ID, "speaker");
 
     // List of all Channel ids
-    public final static String POWER = "power";
-    public final static String VOLUME = "volume";
-    public final static String MUTE = "mute";
-    public final static String INPUT = "input";
-    public final static String MODEL_NAME = "model_name";
-    public final static String ALBUM_ART = "album_art";
+    public static final String CHANNEL_POWER = "power";
+    public static final String CHANNEL_VOLUME = "volume";
+    public static final String CHANNEL_MUTE = "mute";
+    public static final String CHANNEL_INPUT = "input";
+    public static final String CHANNEL_ALBUM_ART = "albumAart";
+
+    // The supported thing types
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SPEAKER);
 
     // Configuration constants
     public static class Configs {
@@ -47,16 +43,27 @@ public class YamahaMusicCastBindingConstants {
         public static final String CONFIG_ZONE = "zone";
     }
 
+    // Default UDP listening events  port
+    public static final int EVENTS_DEFAULT_PORT = 41100;
+
+    // List of properties
+    public static final String DESC_DEVICE_TYPE = "MediaRenderer";
+    public static final String DESC_MANUFACTURER = "Yamaha Corporation";
+    public static final String DESC_FRIENDLY_NAME = "friendlyName";
+    public static final String DESC_MODEL_NAME = "modelName";
+    public static final String DESC_SERIAL_NUMBER = "serialNumber";
+    public static final String DESC_IP_ADDRESS = "ipAddress";
+
     /**
      * The names of this enum are part of the protocols!
      * Receivers have different capabilities, some have 2 zones, some up to 4.
      * Every receiver has a "Main_Zone".
      */
     public enum Zone {
-        Main_Zone,
-        Zone_2,
-        Zone_3,
-        Zone_4
+        main,
+        zone2,
+        zone3,
+        zone4
     }
 
     /**
@@ -127,8 +134,5 @@ public class YamahaMusicCastBindingConstants {
         main_sync,
         none
     }
-
-    public static final String UPNP_TYPE = "MediaRenderer";
-    public static final String UPNP_MANUFACTURER = "YAMAHA";
 
 }

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.library.types.RawType;
@@ -51,6 +52,8 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * The {@link YamahaMusicCastHandler} is responsible for handling commands, which are
@@ -86,30 +89,50 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     }
 
     @Override
+    public void initialize() {
+        // TODO: Initialize the thing. If done set status to ONLINE to indicate proper working.
+        // Long running initialization should be done asynchronously in background.
+        config = getConfig().as(YamahaMusicCastThingConfig.class);
+        updateStatus(ThingStatus.ONLINE);
+
+        // Note: When initialization can NOT be done set the status with more details for further
+        // analysis. See also class ThingStatusDetail for all available status details.
+        // Add a description to give user information to understand why thing does not work
+        // as expected. E.g.
+        // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
+        // "Can not access device as username and/or password are invalid");
+    }
+
+    @Override
+    public void dispose() {
+        cancelRefreshJob();
+    }
+    
+    @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         logger.debug("Handling command = {} for channel = {}", command, channelUID);
         if (command == REFRESH) {
             refresh(channelUID);
         } else {
             switch (channelUID.getId()) {
-                case POWER:
+                case CHANNEL_POWER:
                     if (command.equals(OnOffType.ON)) {
                         postPowerState(ON);
                     } else if (command.equals(OnOffType.OFF)) {
                         postPowerState(OFF);
                     }
                     break;
-                case MUTE:
+                case CHANNEL_MUTE:
                     if (command.equals(OnOffType.ON)) {
                         postMuteState("true");
                     } else if (command.equals(OnOffType.OFF)) {
                         postMuteState("false");
                     }
                     break;
-                case INPUT:
+                case CHANNEL_INPUT:
                     postInput(command.toString());
                     break;
-                case VOLUME:
+                case CHANNEL_VOLUME:
                     postVolumeState(command.toString());
                     break;
             }
@@ -172,6 +195,64 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         }
     }
 
+    /**
+     * Method called by {@link SilvercrestWifiSocketMediator} when one new message has been received for this handler.
+     *
+     * @param receivedMessage the received {@link SilvercrestWifiSocketResponse}.
+     */
+    public void newReceivedResponseMessage(final String message) {
+        // if the host of the packet is different from the host address set in handler, update the host
+        // address.
+/*         if (!receivedMessage.getHostAddress().equals(this.hostAddress)) {
+            logger.debug(
+                    "The host of the packet is different from the host address set in handler. "
+                            + "Will update the host address. handler of mac: {}. "
+                            + "Old host address: '{}' -> new host address: '{}'",
+                    this.macAddress, this.hostAddress, receivedMessage.getHostAddress());
+
+            this.hostAddress = receivedMessage.getHostAddress();
+            this.saveConfigurationsUsingCurrentStates();
+        }
+ */
+        Status messageStatus = null;  
+        State result = null;
+        JsonObject jsonObject = new JsonParser().parse(message).getAsJsonObject();
+        logger.debug("Received messaged parsed");
+        if (jsonObject.has("main")) {
+            if (jsonObject.get("main").isJsonArray()) {
+                logger.info("Object is array.");
+                messageStatus = gson.fromJson(jsonObject.getAsJsonArray("main"), Status.class);
+            } else {
+                messageStatus = gson.fromJson(jsonObject.getAsJsonObject("main"), Status.class);
+            }
+        }
+
+/*         switch (receivedMessage.getType()) {
+            case ACK:
+                break;
+            case DISCOVERY:
+                break;
+            case OFF:
+                this.updateState(SilvercrestWifiSocketBindingConstants.WIFI_SOCKET_CHANNEL_ID, OnOffType.OFF);
+                break;
+            case ON:
+                this.updateState(SilvercrestWifiSocketBindingConstants.WIFI_SOCKET_CHANNEL_ID, OnOffType.ON);
+                break;
+            default:
+                logger.debug("Command not found!");
+                break;
+        }
+ */
+        if (messageStatus != null) {
+            result = OnOffType.from(messageStatus.getPower());
+        }
+        if (result != null) {
+            updateState(CHANNEL_POWER, result);
+        }
+//        this.updateStatus(ThingStatus.ONLINE);
+//        this.latestUpdate = System.currentTimeMillis();
+    }
+
     private void refresh(ChannelUID channelUID) {
         logger.info("Refresh Channel " + channelUID.getAsString());
         getUpdate();
@@ -180,22 +261,22 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         State result = null;
         if (state != null) {
             switch (channelID) {
-                case VOLUME:
+                case CHANNEL_VOLUME:
                     result = new PercentType(state.getVolume() * 100 / state.getMax_volume());
                     break;
-                case POWER:
+                case CHANNEL_POWER:
                     result = OnOffType.from(state.getPower());
                     break;
-                case MUTE:
+                case CHANNEL_MUTE:
                     result = OnOffType.from(state.isMute());
                     break;
-                case INPUT:
+                case CHANNEL_INPUT:
                     result = StringType.valueOf(state.getInput());
                     break;
-                case MODEL_NAME:
+/*                 case MODEL_NAME:
                     result = StringType.valueOf(info.getModel_name());
                     break;
-                case ALBUM_ART:
+ */                case CHANNEL_ALBUM_ART:
                     String urlString = "http://" + host;
                     if (playInfo.getAlbumart_url().isEmpty()) {
                         urlString += ":49154/Icons/120x120.jpg";
@@ -223,21 +304,6 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         if (result != null) {
             updateState(channelID, result);
         }
-    }
-
-    @Override
-    public void initialize() {
-        // TODO: Initialize the thing. If done set status to ONLINE to indicate proper working.
-        // Long running initialization should be done asynchronously in background.
-        config = getConfig().as(YamahaMusicCastThingConfig.class);
-        updateStatus(ThingStatus.ONLINE);
-
-        // Note: When initialization can NOT be done set the status with more details for further
-        // analysis. See also class ThingStatusDetail for all available status details.
-        // Add a description to give user information to understand why thing does not work
-        // as expected. E.g.
-        // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-        // "Can not access device as username and/or password are invalid");
     }
 
     private void postPowerState(String state) {
@@ -375,5 +441,9 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
             }
         }
         return baos;
+    }
+
+    public String getHost() {
+        return this.host;
     }
 }
