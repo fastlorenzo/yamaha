@@ -19,22 +19,22 @@ public class NetUSBEvent extends Event {
     protected Integer play_error;
     protected Integer multiple_play_errors;
     protected String play_message;
-    protected boolean account_updated;
+    protected Boolean account_updated;
     protected Integer play_time;
-    protected boolean preset_info_updated;
-    protected boolean recent_info_updated;
+    protected Boolean preset_info_updated;
+    protected Boolean recent_info_updated;
     protected Object preset_control;
     protected String type;
     protected Integer num;
     protected String result;
     protected Object trial_status;
     protected String input;
-    protected boolean enable;
+    protected Boolean enable;
     protected Object trial_time_left;
-    protected String input;
+//    protected String input;
     protected Integer time;
-    protected boolean play_info_updated;
-    protected boolean list_info_updated;
+    protected Boolean play_info_updated;
+    protected Boolean list_info_updated;
 
     /*
      * Returns error codes happened during playback for displaying appropriate
@@ -82,7 +82,7 @@ public class NetUSBEvent extends Event {
      * Returns whether or not account info has changed. If so, pull renewed info
      * using /netusb/getAccountStatus 
      */
-    public boolean getAccountUpdated() {
+    public Boolean getAccountUpdated() {
         return account_updated;
     }
 
@@ -97,7 +97,7 @@ public class NetUSBEvent extends Event {
      * Returns whether or not preset info has changed. If so, pull renewed info
      * using netusb/getPresetInfo 
      */
-    public boolean getPresetInfoUpdated() {
+    public Boolean getPresetInfoUpdated() {
         return preset_info_updated;
     }
 
@@ -105,7 +105,7 @@ public class NetUSBEvent extends Event {
      * Returns whether or not playback history info has changed. If so, pull
      * renewed info using /netusb/getRecentInfo  
      */
-    public boolean getRecentInfoUpdated() {
+    public Boolean getRecentInfoUpdated() {
         return recent_info_updated;
     }
 
@@ -161,7 +161,7 @@ public class NetUSBEvent extends Event {
      * Returns whether or not trial can be initiated. If false, new trial cannot
      * get started due to a Device in trial status 
      */
-    public boolean getEnable() {
+    public Boolean getEnable() {
         return enable;
     }
 
@@ -175,7 +175,7 @@ public class NetUSBEvent extends Event {
     /*
      * Returns Net/USB related Input IDs   
      */
-    public String getInput() {
+    public String getTrialTimeLeftInput() {
         return input;
     }
 
@@ -193,7 +193,7 @@ public class NetUSBEvent extends Event {
      * Returns whether or not playback info has changed. If so, pull renewed info
      * using /netusb/getPlayInfo
      */
-    public boolean getPlayInfoUpdated() {
+    public Boolean getPlayInfoUpdated() {
         return play_info_updated;
     }
 
@@ -201,7 +201,7 @@ public class NetUSBEvent extends Event {
      * Returns whether or not list info has changed. If so, pull renewed info
      * using /netusb/getListInfo 
      */
-    public boolean getListInfoUpdated() {
+    public Boolean getListInfoUpdated() {
         return list_info_updated;
     }
 }

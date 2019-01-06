@@ -18,7 +18,7 @@ public class CdEvent extends Event {
 
     protected String device_status;
     protected Integer play_time;
-    protected boolean play_info_updated;
+    protected Boolean play_info_updated;
 
     /*
      * Returns CD device status Values: "open" / "close" / "ready" / "not_ready" 
@@ -37,7 +37,7 @@ public class CdEvent extends Event {
     /*
      * Returns whether or not playback info has changed. If so, pull renewed info using /cd/getPlayInfo 
      */
-    public boolean getPlayInfoUpdated() {
+    public Boolean getPlayInfoUpdated() {
         return play_info_updated;
     }
 }

@@ -19,6 +19,7 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
  *
  * @author Frank Zimmer - Initial contribution
  * @author Dries Decock
+ * @author Hector Rodriguez Medina - Updates for event receiver
  */
 public class YamahaMusicCastBindingConstants {
 

@@ -16,8 +16,8 @@ package org.openhab.binding.yamahamusiccast.internal.api.model.events;
  */
 public class TunerEvent extends Event {
 
-    protected boolean play_info_updated;
-    protected boolean preset_info_updated;
+    protected Boolean play_info_updated;
+    protected Boolean preset_info_updated;
 
     /*
      * Returns whether or not playback info has changed. If so, pull renewed info

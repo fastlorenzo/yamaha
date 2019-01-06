@@ -46,6 +46,9 @@ import org.openhab.binding.yamahamusiccast.internal.api.model.DeviceInfo;
 import org.openhab.binding.yamahamusiccast.internal.api.model.PlayInfo;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Status;
+import org.openhab.binding.yamahamusiccast.internal.api.model.SubscribeEvent;
+import org.openhab.binding.yamahamusiccast.internal.api.model.events.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +77,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private DeviceInfo info;
     private Status state;
     private PlayInfo playInfo;
+    private SubscribeEvent subscribeEvent;
     private @Nullable ScheduledFuture<?> refreshJob;
     private @Nullable YamahaMusicCastThingConfig config;
 
@@ -86,6 +90,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         state = null;
         info = null;
         playInfo = null;
+        subscribeEvent = null;
     }
 
     @Override
@@ -188,69 +193,16 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
             playInfoRequest.setPath(PlayInfo.url);
             playInfo = playInfoRequest.execute();
 
+            MusicCastRequest<SubscribeEvent> subscribeEventRequest = newRequest(SubscribeEvent.class);
+            subscribeEventRequest.setPath(SubscribeEvent.url);
+            subscribeEventRequest.setHeaders("X-AppName", SubscribeEvent.appName);
+            subscribeEventRequest.setHeaders("X-AppPort", EVENTS_DEFAULT_PORT);
+            subscribeEvent = subscribeEventRequest.execute();
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
             //e.printStackTrace();
             logger.debug(e.toString());
         }
-    }
-
-    /**
-     * Method called by {@link SilvercrestWifiSocketMediator} when one new message has been received for this handler.
-     *
-     * @param receivedMessage the received {@link SilvercrestWifiSocketResponse}.
-     */
-    public void newReceivedResponseMessage(final String message) {
-        // if the host of the packet is different from the host address set in handler, update the host
-        // address.
-/*         if (!receivedMessage.getHostAddress().equals(this.hostAddress)) {
-            logger.debug(
-                    "The host of the packet is different from the host address set in handler. "
-                            + "Will update the host address. handler of mac: {}. "
-                            + "Old host address: '{}' -> new host address: '{}'",
-                    this.macAddress, this.hostAddress, receivedMessage.getHostAddress());
-
-            this.hostAddress = receivedMessage.getHostAddress();
-            this.saveConfigurationsUsingCurrentStates();
-        }
- */
-        Status messageStatus = null;  
-        State result = null;
-        JsonObject jsonObject = new JsonParser().parse(message).getAsJsonObject();
-        logger.debug("Received messaged parsed");
-        if (jsonObject.has("main")) {
-            if (jsonObject.get("main").isJsonArray()) {
-                logger.info("Object is array.");
-                messageStatus = gson.fromJson(jsonObject.getAsJsonArray("main"), Status.class);
-            } else {
-                messageStatus = gson.fromJson(jsonObject.getAsJsonObject("main"), Status.class);
-            }
-        }
-
-/*         switch (receivedMessage.getType()) {
-            case ACK:
-                break;
-            case DISCOVERY:
-                break;
-            case OFF:
-                this.updateState(SilvercrestWifiSocketBindingConstants.WIFI_SOCKET_CHANNEL_ID, OnOffType.OFF);
-                break;
-            case ON:
-                this.updateState(SilvercrestWifiSocketBindingConstants.WIFI_SOCKET_CHANNEL_ID, OnOffType.ON);
-                break;
-            default:
-                logger.debug("Command not found!");
-                break;
-        }
- */
-        if (messageStatus != null) {
-            result = OnOffType.from(messageStatus.getPower());
-        }
-        if (result != null) {
-            updateState(CHANNEL_POWER, result);
-        }
-//        this.updateStatus(ThingStatus.ONLINE);
-//        this.latestUpdate = System.currentTimeMillis();
     }
 
     private void refresh(ChannelUID channelUID) {
@@ -273,10 +225,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                 case CHANNEL_INPUT:
                     result = StringType.valueOf(state.getInput());
                     break;
-/*                 case MODEL_NAME:
-                    result = StringType.valueOf(info.getModel_name());
-                    break;
- */                case CHANNEL_ALBUM_ART:
+                case CHANNEL_ALBUM_ART:
                     String urlString = "http://" + host;
                     if (playInfo.getAlbumart_url().isEmpty()) {
                         urlString += ":49154/Icons/120x120.jpg";
@@ -309,7 +258,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private void postPowerState(String state) {
         try {
             setValue("/YamahaExtendedControl/v2/main/setPower", "power", state);
-            refresh();
+            //refresh();
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
             //e.printStackTrace();
@@ -321,7 +270,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private void postInput(String input) {
         try {
             setValue("/YamahaExtendedControl/v2/main/setInput", "input", input);
-            refresh();
+            //refresh();
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
             //e.printStackTrace();
@@ -332,7 +281,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private void postVolumeState(String volume) {
         try {
             setValue("/YamahaExtendedControl/v2/main/setVolume", "volume", volume);
-            refresh();
+            //refresh();
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
             //e.printStackTrace();
@@ -343,7 +292,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private void postMuteState(String mute) {
         try {
             setValue("/YamahaExtendedControl/v2/main/setMute", "enable", mute);
-            refresh();
+            //refresh();
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
             //e.printStackTrace();
@@ -354,7 +303,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     @Override
     protected void updateStatus(ThingStatus status, ThingStatusDetail statusDetail, @Nullable String description) {
         if (status == ONLINE || (status == OFFLINE && statusDetail == COMMUNICATION_ERROR)) {
-            //scheduleRefreshJob();
+            scheduleRefreshJob();
         } else if (status == OFFLINE && statusDetail == CONFIGURATION_ERROR) {
             cancelRefreshJob();
         }
@@ -369,10 +318,105 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private void refresh() throws MusicCastException {
         logger.debug("Refreshing the MusicCast speaker {}", getThing().getUID());
         getUpdate();
-        for (Channel channel : getThing().getChannels()) {
+/*         for (Channel channel : getThing().getChannels()) {
             ChannelUID channelUID = channel.getUID();
             refresh(channelUID);
         }
+ */
+        if (state != null) {
+            State result = null;
+            result = new PercentType(state.getVolume() * 100 / state.getMax_volume());
+            updateState(CHANNEL_VOLUME, result);
+            result = OnOffType.from(state.getPower());
+            updateState(CHANNEL_POWER, result);
+            result = OnOffType.from(state.isMute());
+            updateState(CHANNEL_MUTE, result);
+            result = StringType.valueOf(state.getInput());
+            updateState(CHANNEL_INPUT, result);
+            String urlString = "http://" + host;
+            if (playInfo.getAlbumart_url().isEmpty()) {
+                urlString += ":49154/Icons/120x120.jpg";
+            } else {
+                urlString += playInfo.getAlbumart_url();
+            }
+            URL url;
+            logger.debug("Getting image from " + urlString);
+            try {
+                url = new URL(urlString);
+                result = new RawType(readImage(url).toByteArray(), "image/jpeg");
+                updateState(CHANNEL_ALBUM_ART, result);
+            } catch (MalformedURLException e1) {
+                // TODO Auto-generated catch block
+                //e1.printStackTrace();
+                logger.debug(e1.toString());
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                //e.printStackTrace();
+                logger.debug(e.toString());
+            }
+        }
+    }
+
+    /**
+     * Method called by {@link YamahaMusicCastEventMediator} when one new message has been received for this handler.
+     */
+    public void newReceivedResponseMessage(final String message) {
+        // if the host of the packet is different from the host address set in handler, update the host
+        // address.
+/*         if (!receivedMessage.getHostAddress().equals(this.hostAddress)) {
+            logger.debug(
+                    "The host of the packet is different from the host address set in handler. "
+                            + "Will update the host address. handler of mac: {}. "
+                            + "Old host address: '{}' -> new host address: '{}'",
+                    this.macAddress, this.hostAddress, receivedMessage.getHostAddress());
+
+            this.hostAddress = receivedMessage.getHostAddress();
+            this.saveConfigurationsUsingCurrentStates();
+        }
+ */
+        SystemEvent systemMessage = null;  
+        NetUSBEvent netUSBMessage = null;  
+        ZoneEvent zoneMessage = null;  
+        State result = null;
+        JsonObject jsonObject = new JsonParser().parse(message).getAsJsonObject();
+        logger.debug("Received messaged parsed");
+
+        if (jsonObject.has("system")) {
+            systemMessage = gson.fromJson(jsonObject.getAsJsonObject("system"), SystemEvent.class);
+        }
+
+        if (jsonObject.has("netusb")) {
+            netUSBMessage = gson.fromJson(jsonObject.getAsJsonObject("netusb"), NetUSBEvent.class);
+        }
+
+        for (Zone messageZone : Zone.values()) {
+            if (jsonObject.has(messageZone.toString())) {
+                zoneMessage = gson.fromJson(jsonObject.getAsJsonObject(messageZone.toString()), ZoneEvent.class);
+            }
+        }
+
+        if (zoneMessage != null) {
+            if (zoneMessage.getVolume() instanceof Integer) {
+                result = new PercentType(zoneMessage.getVolume() * 100 / 60);
+                updateState(CHANNEL_VOLUME, result);
+            }
+            if (zoneMessage.getPower() instanceof String) {
+                logger.debug("Received power message");
+                result = OnOffType.from(zoneMessage.getPower());
+                updateState(CHANNEL_POWER, result);
+            }
+            if (zoneMessage.getMute() instanceof Boolean) {
+                result = OnOffType.from(zoneMessage.getMute());
+                updateState(CHANNEL_MUTE, result);
+            }
+            if (zoneMessage.getInput() instanceof String) {
+                result = StringType.valueOf(zoneMessage.getInput());
+                updateState(CHANNEL_INPUT, result);
+            }
+        }
+
+//        this.updateStatus(ThingStatus.ONLINE);
+//        this.latestUpdate = System.currentTimeMillis();
     }
 
     private void run() {
@@ -393,8 +437,8 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         synchronized (this) {
             if (refreshJob == null) {
                 logger.debug("Scheduling refresh job every {}s", 1);
-                //refreshJob = scheduler.scheduleWithFixedDelay(this::run, 0, config.getRefreshInterval(),
-                //        TimeUnit.SECONDS);
+                refreshJob = scheduler.scheduleWithFixedDelay(this::run, 0, config.getRefreshInterval(),
+                        TimeUnit.SECONDS);
             }
         }
     }

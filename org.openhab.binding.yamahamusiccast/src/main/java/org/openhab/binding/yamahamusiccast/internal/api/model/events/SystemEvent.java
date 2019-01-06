@@ -16,19 +16,19 @@ package org.openhab.binding.yamahamusiccast.internal.api.model.events;
  */
 public class SystemEvent extends Event {
 
-    protected boolean bluetooth_info_updated;
-    protected boolean func_status_updated;
-    protected boolean speaker_settings_updated;
-    protected boolean name_text_updated;
-    protected boolean tag_updated;
-    protected boolean location_info_updated;
-    protected boolean stereo_pair_info_updated;
+    protected Boolean bluetooth_info_updated;
+    protected Boolean func_status_updated;
+    protected Boolean speaker_settings_updated;
+    protected Boolean name_text_updated;
+    protected Boolean tag_updated;
+    protected Boolean location_info_updated;
+    protected Boolean stereo_pair_info_updated;
 
     /**
      * Returns whether or not Bluetooth info has changed. If so, pull
      * renewed info using /system/getBluetoothInfo
      */
-    public boolean getBluetoothInfoUpdated() {
+    public Boolean getBluetoothInfoUpdated() {
         return bluetooth_info_updated;
     }
 
@@ -36,14 +36,14 @@ public class SystemEvent extends Event {
      * Returns whether or not System overall info has changed. If so,
      * pull renewed info using /system/getFuncStatus
      */
-    public boolean getFuncStatusUpdated() {
+    public Boolean getFuncStatusUpdated() {
         return func_status_updated;
     }
 
     /**
      * Reserved 
      */
-    public boolean getSpeakerSettingsUpdated() {
+    public Boolean getSpeakerSettingsUpdated() {
         return speaker_settings_updated;
     }
 
@@ -51,14 +51,14 @@ public class SystemEvent extends Event {
      * Returns whether or not name text info has changed. If so, pull
      * renewed info using /system/getNameText
      */
-    public boolean getNameTextUpdated() {
+    public Boolean getNameTextUpdated() {
         return name_text_updated;
     }
 
     /**
      * Reserved
      */
-    public boolean getTagUpdated() {
+    public Boolean getTagUpdated() {
         return tag_updated;
     }
 
@@ -66,14 +66,14 @@ public class SystemEvent extends Event {
      * Returns whether or not Location info has changed. If so, pull
      * renewed info using /system/getLocationInfo 
      */
-    public boolean getLocationInfoUpdated() {
+    public Boolean getLocationInfoUpdated() {
         return location_info_updated;
     }
 
     /**
      * Reserved
      */
-    public boolean getStereoPairInfoUpdated() {
+    public Boolean getStereoPairInfoUpdated() {
         return stereo_pair_info_updated;
     }
 }

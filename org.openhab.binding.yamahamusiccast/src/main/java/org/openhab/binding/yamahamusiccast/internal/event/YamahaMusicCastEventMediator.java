@@ -21,7 +21,8 @@ import org.openhab.binding.yamahamusiccast.handler.YamahaMusicCastHandler;
  * The {@link YamahaMusicCastEventMediator} is responsible for receiving all the UDP packets and route correctly to
  * each handler.
  *
- * @author Hector Rodriguez - Initial contribution
+ * @author Jaime Vaz - Initial contribution
+ * @author Hector Rodriguez - Adapted for Musiccast binding
  */
 public interface YamahaMusicCastEventMediator {
 

@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
  * handlers.
  * 
  * @author Frank Zimmer - Initial contribution
+ * @author Hector Rodriguez Medina - Add event mediator
  */
 @Component(service = ThingHandlerFactory.class, configurationPid = "binding.yamahamusiccast")
 public class YamahaMusicCastHandlerFactory extends BaseThingHandlerFactory {

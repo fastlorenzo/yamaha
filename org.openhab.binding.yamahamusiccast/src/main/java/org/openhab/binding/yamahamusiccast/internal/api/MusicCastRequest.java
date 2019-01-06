@@ -76,6 +76,8 @@ public class MusicCastRequest<T> {
 
     private Map<String, String> bodyParameters = new HashMap<>();
 
+    private Map<String, String> requestHeaders = new HashMap<>();
+
     private Class<T> resultType;
 
     // Public API
@@ -100,18 +102,22 @@ public class MusicCastRequest<T> {
         this.queryParameters.put(key, String.valueOf(value));
     }
 
+    public void setHeaders(String key, Object value) {
+        this.requestHeaders.put(key, String.valueOf(value));
+    }
+
     public <@Nullable T extends @Nullable Response> @Nullable T execute() throws MusicCastException {
         T result = null;
         String json = getContent();
-        logger.info("JSON is " + json);
+        logger.debug("JSON is " + json);
         // mgb: only try and unmarshall non-void result types
         if (!Void.class.equals(resultType)) {
             JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-            logger.info("JsonObject: " + jsonObject.toString());
+            logger.debug("JsonObject: " + jsonObject.toString());
             if (jsonObject.has(PROPERTY_DATA)) {
-                logger.info("JsonObject has Property data");
+                logger.debug("JsonObject has Property data");
                 if (jsonObject.get(PROPERTY_DATA).isJsonArray()) {
-                    logger.info("Object is array.");
+                    logger.debug("Object is array.");
                     result = (T) gson.fromJson(jsonObject.getAsJsonArray(PROPERTY_DATA), resultType);
                 } else {
                     result = (T) gson.fromJson(jsonObject.getAsJsonObject(PROPERTY_DATA), resultType);
@@ -223,6 +229,11 @@ public class MusicCastRequest<T> {
                 .method(method);
         for (Entry<String, String> entry : queryParameters.entrySet()) {
             request.param(entry.getKey(), entry.getValue());
+        }
+        if (!requestHeaders.isEmpty()) {
+            for (Entry<String, String> entry : requestHeaders.entrySet()) {
+                request.header(entry.getKey(), entry.getValue());
+            }
         }
         if (!bodyParameters.isEmpty()) {
             String jsonBody = getRequestBodyAsJson();

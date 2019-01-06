@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
  * The {@link YamahaMusicCastEventMediatorImpl} is responsible for receiving all the UDP packets and route correctly to
  * each handler.
  *
- * @author Hector Rodriguez - Initial contribution
+ * @author Jaime Vaz - Initial contribution
+ * @author Hector Rodriguez - Adapted for Musiccast binding
  */
 @Component(service = YamahaMusicCastEventMediator.class, immediate = true)
 public class YamahaMusicCastEventMediatorImpl implements YamahaMusicCastEventMediator {
@@ -71,8 +72,6 @@ public class YamahaMusicCastEventMediatorImpl implements YamahaMusicCastEventMed
     /**
      * This method is called by the {@link YamahaMusicCastEventReceiver}, when one new message has been
      * received.
-     *
-     * @param receivedMessage the {@link SilvercrestWifiSocketResponse} message.
      */
     @Override
     public void processReceivedPacket(final DatagramPacket packet) {

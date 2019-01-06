@@ -19,22 +19,28 @@ public class ZoneEvent extends Event {
     protected String power;
     protected String input;
     protected Integer volume;
-    protected boolean mute;
-    protected boolean status_updated;
-    protected boolean signal_info_updated;
+    protected Boolean mute;
+    protected Boolean status_updated;
+    protected Boolean signal_info_updated;
 
     /*
      * Returns power status Values: "on" / "standby" 
      */
     public String getPower() {
-        return power;
+//        if (power != null)
+            return power;
+//        else
+//            return "9999";
     }
 
     /*
      * Returns current Input ID Values: Input IDs gotten via /system/getFeature 
      */
     public String getInput() {
-        return input;
+//        if (input != null)
+            return input;
+//        else
+//            return "9999";
     }
 
     /*
@@ -42,13 +48,16 @@ public class ZoneEvent extends Event {
      * values gotten via /system/getFeatures 
      */
     public Integer getVolume() {
-        return volume;
+//        if (volume != null)
+            return volume;
+//        else
+//            return 9999;
     }
 
     /*
      * Returns mute status 
      */
-    public boolean getMute() {
+    public Boolean getMute() {
         return mute;
     }
 
@@ -56,7 +65,7 @@ public class ZoneEvent extends Event {
      * Returns whether or not other info has changed than main zone power/input/volume/mute status.
      * If so, pull renewed info using /main/getStatus 
      */
-    public boolean getStatusUpdated() {
+    public Boolean getStatusUpdated() {
         return status_updated;
     }
 
@@ -64,7 +73,7 @@ public class ZoneEvent extends Event {
      * Returns whether or not signal info has changed. If so, pull renewed info using
      * /main/getSignalInfo
      */
-    public boolean getSignalInfoUpdated() {
+    public Boolean getSignalInfoUpdated() {
         return signal_info_updated;
     }
 }

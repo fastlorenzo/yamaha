@@ -7,18 +7,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.openhab.binding.yamahamusiccast.internal.api.model.events;
+package org.openhab.binding.yamahamusiccast.internal.api.model;
 
 /**
- * Event
+ * SubscribeEvent
  *
- * @author Hector Rodriguez Medina - Initial contribution
+ * @author Dries Decock - Initial contribution
  */
-public class Event {
 
-    protected String deviceId;
+public class SubscribeEvent extends Response {
+    public static final String url = "/YamahaExtendedControl/v2";
 
-    public String getDeviceId() {
-        return deviceId;
-    }
+    public static final String appName = "MusicCast/2";
+
 }

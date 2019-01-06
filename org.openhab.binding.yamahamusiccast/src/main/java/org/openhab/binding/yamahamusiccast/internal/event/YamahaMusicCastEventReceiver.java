@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
  * This Thread is responsible to receive all Wifi Socket messages and redirect them to
  * {@link YamahaMusicCastEventMediator}.
  *
- * @author Hector Rodriguez - Initial contribution
+ * @author Jaime Vaz - Initial contribution
+ * @author Hector Rodriguez - Adapted for Musiccast binding
  *
  */
 public class YamahaMusicCastEventReceiver implements Runnable {
