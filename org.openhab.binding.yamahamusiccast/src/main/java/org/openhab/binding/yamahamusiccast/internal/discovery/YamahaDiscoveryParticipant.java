@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.discovery;
 
-import static org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants.Configs.CONFIG_HOST_NAME;
-
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,7 +37,7 @@ public class YamahaDiscoveryParticipant implements UpnpDiscoveryParticipant {
 
     private final Logger logger = LoggerFactory.getLogger(YamahaDiscoveryParticipant.class);
 
-    private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections
+    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections
             .singleton(YamahaMusicCastBindingConstants.THING_TYPE_SPEAKER);
 
     @Override
@@ -54,7 +52,7 @@ public class YamahaDiscoveryParticipant implements UpnpDiscoveryParticipant {
             return null;
         }
 
-        Map<String, Object> properties = new HashMap<>(3);
+        Map<String, Object> properties = new HashMap<>(4);
 
         String label = "Yamaha MusicCast Speaker ";
         try {
@@ -66,7 +64,10 @@ public class YamahaDiscoveryParticipant implements UpnpDiscoveryParticipant {
         }
 
         URL url = device.getIdentity().getDescriptorURL();
-        properties.put(CONFIG_HOST_NAME, url.getHost());
+        properties.put(YamahaMusicCastBindingConstants.Configs.CONFIG_HOST_NAME, url.getHost());
+        properties.put(YamahaMusicCastBindingConstants.DESC_FRIENDLY_NAME, device.getDetails().getFriendlyName());
+        properties.put(YamahaMusicCastBindingConstants.DESC_MODEL_NAME, device.getDetails().getModelDetails().getModelName());
+        properties.put(YamahaMusicCastBindingConstants.DESC_SERIAL_NUMBER, device.getDetails().getSerialNumber());
 
         // The port via UPNP is unreliable, sometimes it is 8080, on some models 49154.
         // But so far the API was always reachable via port 80.
@@ -74,7 +75,7 @@ public class YamahaDiscoveryParticipant implements UpnpDiscoveryParticipant {
         // Note the port is set in the thing-types.xml to 80 by default.
 
         DiscoveryResult result = DiscoveryResultBuilder.create(uid).withTTL(MIN_MAX_AGE_SECS).withProperties(properties)
-                .withLabel(label).withRepresentationProperty(CONFIG_HOST_NAME).build();
+                .withLabel(label).withRepresentationProperty(YamahaMusicCastBindingConstants.Configs.CONFIG_HOST_NAME).build();
 
         logger.debug("Discovered a Yamaha Receiver '{}' model '{}' thing with UDN '{}'",
                 device.getDetails().getFriendlyName(), device.getDetails().getModelDetails().getModelName(),
