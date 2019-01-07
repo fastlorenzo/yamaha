@@ -6,8 +6,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Returns System related information 

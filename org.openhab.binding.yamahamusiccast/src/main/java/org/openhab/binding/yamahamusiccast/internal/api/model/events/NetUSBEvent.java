@@ -6,8 +6,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Returns Net/USB related information
@@ -31,18 +32,13 @@ public class NetUSBEvent {
     @SerializedName("recent_info_updated")
     protected Boolean recentInfoUpdated;
     @SerializedName("preset_control")
-    protected Object presetControl;
-    protected String type;
-    protected Integer num;
-    protected String result;
+    protected PresetControl presetControl;
+/*
     @SerializedName("trial_status")
-    protected Object trialStatus;
-    protected String input;
-    protected Boolean enable;
+    protected TrialStatus trialStatus;
     @SerializedName("trial_time_left")
-    protected Object trialTimeLeft;
-//    protected String input;
-    protected Integer time;
+    protected TrialTimeLeft trialTimeLeft;
+*/
     @SerializedName("play_info_updated")
     protected Boolean playInfoUpdated;
     @SerializedName("list_info_updated")
@@ -124,48 +120,50 @@ public class NetUSBEvent {
     /*
      * Returns results of Preset operations   
      */
-    public Object getPresetControl() {
-        return presetControl;
-    }
+    public class PresetControl {
+        protected String type;
+        protected Integer num;
+        protected String result;
 
-    /*
-     * Returns a type of Preset operations Values: "store" / "clear" / "recall"   
-     */
-    public String getType() {
-        return type;
-    }
+        /*
+        * Returns a type of Preset operations Values: "store" / "clear" / "recall"   
+        */
+        public String getType() {
+            return type;
+        }
 
-    /*
-     * Returns a Preset number being operated Value: one in the range gotten
-     * via /system/getFeatures   
-     */
-    public Integer getNum() {
-        return num;
-    }
+        /*
+        * Returns a Preset number being operated Value: one in the range gotten
+        * via /system/getFeatures   
+        */
+        public Integer getNum() {
+            return num;
+        }
 
-    /*
-     * Returns the result of operation
-     * Values:
-     * "success" (for all types) /
-     * "error" (for all types) /
-     * "empty" (only for recall) /
-     * "not_found" (only for recall) 
-     */
-    public String getResult() {
-        return result;
+        /*
+        * Returns the result of operation
+        * Values:
+        * "success" (for all types) /
+        * "error" (for all types) /
+        * "empty" (only for recall) /
+        * "not_found" (only for recall) 
+        */
+        public String getResult() {
+            return result;
+        }
     }
 
     /*
      * Returns trial status of a Device   
      */
-    public Object getTrialStatus() {
+/*    public Object getTrialStatus() {
         return trialStatus;
     }
 
     /*
      * Returns Input IDs related to Net/USB   
      */
-    public String getInput() {
+/*    public String getInput() {
         return input;
     }
 
@@ -173,21 +171,21 @@ public class NetUSBEvent {
      * Returns whether or not trial can be initiated. If false, new trial cannot
      * get started due to a Device in trial status 
      */
-    public Boolean getEnable() {
+/*    public Boolean getEnable() {
         return enable;
     }
 
     /*
      * Returns remaining time of a trial   
      */
-    public Object getTrialTimeLeft() {
+/*    public Object getTrialTimeLeft() {
         return trialTimeLeft;
     }
 
     /*
      * Returns Net/USB related Input IDs   
      */
-    public String getTrialTimeLeftInput() {
+/*    public String getTrialTimeLeftInput() {
         return input;
     }
 
@@ -197,10 +195,10 @@ public class NetUSBEvent {
      * -1 means it has expired,
      * -2 means no info is retrieved yet from the server 
      */
-    public Integer getTime() {
+/*    public Integer getTime() {
         return time;
     }
-
+*/
     /*
      * Returns whether or not playback info has changed. If so, pull renewed info
      * using /netusb/getPlayInfo
