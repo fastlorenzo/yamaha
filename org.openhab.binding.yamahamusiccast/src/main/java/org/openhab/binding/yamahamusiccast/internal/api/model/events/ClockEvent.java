@@ -14,14 +14,15 @@ package org.openhab.binding.yamahamusiccast.internal.api.model.events;
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
-public class ClockEvent extends Event {
+public class ClockEvent {
 
-    protected Boolean settings_updated;
+    @SerializedName("settings_updated")
+    protected Boolean settingsUpdated;
 
     /*
      * Returns whether or not clock info has changed. If so, pull renewed info using /clock/getSettings 
      */
     public Boolean getSettingsUpdated() {
-        return settings_updated;
+        return settingsUpdated;
     }
 }

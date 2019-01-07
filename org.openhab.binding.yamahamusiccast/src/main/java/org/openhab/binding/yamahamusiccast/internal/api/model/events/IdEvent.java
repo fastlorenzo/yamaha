@@ -10,12 +10,14 @@
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
 /**
- * Event
+ * Return s Device ID.ID is same value using /system/getDeviceInfo Note:
+ * Available on and after API Version 1.17
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
-public class Event {
+public class IdEvent {
 
+    @SerializedName("device_id")
     protected String deviceId;
 
     public String getDeviceId() {

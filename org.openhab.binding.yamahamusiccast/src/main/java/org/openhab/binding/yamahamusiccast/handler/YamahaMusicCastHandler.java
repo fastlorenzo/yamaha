@@ -374,12 +374,17 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
             this.saveConfigurationsUsingCurrentStates();
         }
  */
+        IdEvent idMessage = null;
         SystemEvent systemMessage = null;  
         NetUSBEvent netUSBMessage = null;  
         ZoneEvent zoneMessage = null;  
         State result = null;
         JsonObject jsonObject = new JsonParser().parse(message).getAsJsonObject();
         logger.debug("Received messaged parsed");
+
+        if (jsonObject.has("device_id")) {
+            systemMessage = gson.fromJson(jsonObject.getAsJsonObject("device_id"), IdEvent.class);
+        }
 
         if (jsonObject.has("system")) {
             systemMessage = gson.fromJson(jsonObject.getAsJsonObject("system"), SystemEvent.class);

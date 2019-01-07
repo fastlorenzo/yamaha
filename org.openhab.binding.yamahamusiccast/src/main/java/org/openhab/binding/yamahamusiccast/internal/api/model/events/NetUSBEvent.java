@@ -14,27 +14,39 @@ package org.openhab.binding.yamahamusiccast.internal.api.model.events;
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
-public class NetUSBEvent extends Event {
+public class NetUSBEvent {
 
-    protected Integer play_error;
-    protected Integer multiple_play_errors;
-    protected String play_message;
-    protected Boolean account_updated;
-    protected Integer play_time;
-    protected Boolean preset_info_updated;
-    protected Boolean recent_info_updated;
-    protected Object preset_control;
+    @SerializedName("play_error")
+    protected Integer playError;
+    @SerializedName("multiple_play_errors")
+    protected Integer multiplePlayErrors;
+    @SerializedName("play_message")
+    protected String playMessage;
+    @SerializedName("account_updated")
+    protected Boolean accountUpdated;
+    @SerializedName("play_time")
+    protected Integer playTime;
+    @SerializedName("preset_info_updated")
+    protected Boolean presetInfoUpdated;
+    @SerializedName("recent_info_updated")
+    protected Boolean recentInfoUpdated;
+    @SerializedName("preset_control")
+    protected Object presetControl;
     protected String type;
     protected Integer num;
     protected String result;
-    protected Object trial_status;
+    @SerializedName("trial_status")
+    protected Object trialStatus;
     protected String input;
     protected Boolean enable;
-    protected Object trial_time_left;
+    @SerializedName("trial_time_left")
+    protected Object trialTimeLeft;
 //    protected String input;
     protected Integer time;
-    protected Boolean play_info_updated;
-    protected Boolean list_info_updated;
+    @SerializedName("play_info_updated")
+    protected Boolean playInfoUpdated;
+    @SerializedName("list_info_updated")
+    protected Boolean listInfoUpdated;
 
     /*
      * Returns error codes happened during playback for displaying appropriate
@@ -57,7 +69,7 @@ public class NetUSBEvent extends Event {
      * 100: Multiple Errors (common for all Net/USB sources)
      */
     public Integer getPlayError() {
-        return play_error;
+        return playError;
     }
 
     /*
@@ -68,14 +80,14 @@ public class NetUSBEvent extends Event {
      * ... b[11]  Intent Restricted by Streaming Credentials (Qobuz) 
      */
     public Integer getMultiplePlayErrors() {
-        return multiple_play_errors;
+        return multiplePlayErrors;
     }
 
     /*
      * Returns playback related message. Max size is 256 bytes 
      */
     public String getPlayMessage() {
-        return play_message;
+        return playMessage;
     }
 
     /*
@@ -83,14 +95,14 @@ public class NetUSBEvent extends Event {
      * using /netusb/getAccountStatus 
      */
     public Boolean getAccountUpdated() {
-        return account_updated;
+        return accountUpdated;
     }
 
     /*
      * Returns current playback time (unit in second) Value: rages -59999 - 59999 
      */
     public Integer getPlayTime() {
-        return play_time;
+        return playTime;
     }
 
     /*
@@ -98,7 +110,7 @@ public class NetUSBEvent extends Event {
      * using netusb/getPresetInfo 
      */
     public Boolean getPresetInfoUpdated() {
-        return preset_info_updated;
+        return presetInfoUpdated;
     }
 
     /*
@@ -106,14 +118,14 @@ public class NetUSBEvent extends Event {
      * renewed info using /netusb/getRecentInfo  
      */
     public Boolean getRecentInfoUpdated() {
-        return recent_info_updated;
+        return recentInfoUpdated;
     }
 
     /*
      * Returns results of Preset operations   
      */
     public Object getPresetControl() {
-        return preset_control;
+        return presetControl;
     }
 
     /*
@@ -147,7 +159,7 @@ public class NetUSBEvent extends Event {
      * Returns trial status of a Device   
      */
     public Object getTrialStatus() {
-        return trial_status;
+        return trialStatus;
     }
 
     /*
@@ -169,7 +181,7 @@ public class NetUSBEvent extends Event {
      * Returns remaining time of a trial   
      */
     public Object getTrialTimeLeft() {
-        return trial_time_left;
+        return trialTimeLeft;
     }
 
     /*
@@ -194,7 +206,7 @@ public class NetUSBEvent extends Event {
      * using /netusb/getPlayInfo
      */
     public Boolean getPlayInfoUpdated() {
-        return play_info_updated;
+        return playInfoUpdated;
     }
 
     /*
@@ -202,6 +214,6 @@ public class NetUSBEvent extends Event {
      * using /netusb/getListInfo 
      */
     public Boolean getListInfoUpdated() {
-        return list_info_updated;
+        return listInfoUpdated;
     }
 }

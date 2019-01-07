@@ -14,22 +14,29 @@ package org.openhab.binding.yamahamusiccast.internal.api.model.events;
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
-public class SystemEvent extends Event {
+public class SystemEvent {
 
-    protected Boolean bluetooth_info_updated;
-    protected Boolean func_status_updated;
-    protected Boolean speaker_settings_updated;
-    protected Boolean name_text_updated;
-    protected Boolean tag_updated;
-    protected Boolean location_info_updated;
-    protected Boolean stereo_pair_info_updated;
+    @SerializedName("bluetooth_info_updated")
+    protected Boolean bluetoothInfoUpdated;
+    @SerializedName("func_status_updated")
+    protected Boolean funcStatusUpdated;
+    @SerializedName("speaker_settings_updated")
+    protected Boolean speakerSettingsUpdated;
+    @SerializedName("name_text_updated")
+    protected Boolean nameTextUpdated;
+    @SerializedName("tag_updated")
+    protected Boolean tagUpdated;
+    @SerializedName("location_info_updated")
+    protected Boolean locationInfoUpdated;
+    @SerializedName("stereo_pair_info_updated")
+    protected Boolean stereoPairInfoUpdated;
 
     /**
      * Returns whether or not Bluetooth info has changed. If so, pull
      * renewed info using /system/getBluetoothInfo
      */
     public Boolean getBluetoothInfoUpdated() {
-        return bluetooth_info_updated;
+        return bluetoothInfoUpdated;
     }
 
     /**
@@ -37,14 +44,14 @@ public class SystemEvent extends Event {
      * pull renewed info using /system/getFuncStatus
      */
     public Boolean getFuncStatusUpdated() {
-        return func_status_updated;
+        return funcStatusUpdated;
     }
 
     /**
      * Reserved 
      */
     public Boolean getSpeakerSettingsUpdated() {
-        return speaker_settings_updated;
+        return speakerSettingsUpdated;
     }
 
     /**
@@ -52,14 +59,14 @@ public class SystemEvent extends Event {
      * renewed info using /system/getNameText
      */
     public Boolean getNameTextUpdated() {
-        return name_text_updated;
+        return nameTextUpdated;
     }
 
     /**
      * Reserved
      */
     public Boolean getTagUpdated() {
-        return tag_updated;
+        return tagUpdated;
     }
 
     /**
@@ -67,13 +74,13 @@ public class SystemEvent extends Event {
      * renewed info using /system/getLocationInfo 
      */
     public Boolean getLocationInfoUpdated() {
-        return location_info_updated;
+        return locationInfoUpdated;
     }
 
     /**
      * Reserved
      */
     public Boolean getStereoPairInfoUpdated() {
-        return stereo_pair_info_updated;
+        return stereoPairInfoUpdated;
     }
 }
