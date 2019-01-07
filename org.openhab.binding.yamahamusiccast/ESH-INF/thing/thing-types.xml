@@ -28,13 +28,7 @@
 				<description>Time between two updates from the MusicCast device. Unit: seconds.</description>
 			</parameter>
 		</config-description>
-<!--
-        <properties>
-            <property name="friendlyName"/>
-            <property name="modelName"/>
-            <property name="serialNumber"/>
-        </properties>
--->
+
 	</thing-type>
 
 	<channel-type id="power">
