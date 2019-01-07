@@ -383,7 +383,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         logger.debug("Received messaged parsed");
 
         if (jsonObject.has("device_id")) {
-            idMessage = gson.fromJson(jsonObject.getAsJsonObject("device_id"), IdEvent.class);
+            idMessage = gson.fromJson(message, IdEvent.class);
         }
 
         if (jsonObject.has("system")) {
