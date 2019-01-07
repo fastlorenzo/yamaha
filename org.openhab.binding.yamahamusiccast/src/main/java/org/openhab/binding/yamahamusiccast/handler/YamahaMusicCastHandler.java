@@ -402,7 +402,8 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
 
         if (zoneMessage != null) {
             if (zoneMessage.getVolume() instanceof Integer) {
-                result = new PercentType(zoneMessage.getVolume() * 100 / 60);
+                Integer maxVolume = (state != null) ? state.getMax_volume() : 100;
+                result = new PercentType(zoneMessage.getVolume() * 100 / maxVolume);
                 updateState(CHANNEL_VOLUME, result);
             }
             if (zoneMessage.getPower() instanceof String) {
