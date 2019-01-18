@@ -29,11 +29,13 @@ public class YamahaMusicCastBindingConstants {
     public static final ThingTypeUID THING_TYPE_SPEAKER = new ThingTypeUID(BINDING_ID, "speaker");
 
     // List of all Channel ids
+    public static final String CHANNEL_ZONE = "zone";
     public static final String CHANNEL_POWER = "power";
     public static final String CHANNEL_VOLUME = "volume";
     public static final String CHANNEL_MUTE = "mute";
     public static final String CHANNEL_INPUT = "input";
-    public static final String CHANNEL_ALBUM_ART = "albumAart";
+    public static final String CHANNEL_PLAYBACK = "playback";
+    public static final String CHANNEL_ALBUM_ART = "albumArt";
 
     // The supported thing types
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SPEAKER);
@@ -54,6 +56,47 @@ public class YamahaMusicCastBindingConstants {
     public static final String DESC_MODEL_NAME = "modelName";
     public static final String DESC_SERIAL_NUMBER = "serialNumber";
     public static final String DESC_IP_ADDRESS = "ipAddress";
+
+    // API
+    public static final String ROOT_PATH = "/YamahaExtendedControl/v2";
+
+    public static final String SET_POWER_PARAMETER = "power";
+    public static final String ZONE_SET_POWER_METHOD = "/setPower";
+    public static final String ZONE_POWER_ON = "on";
+    public static final String ZONE_POWER_STANDBY = "standby";
+    public static final String ZONE_POWER_TOGGLE = "toggle";
+    
+    public static final String SET_SLEEP_PARAMETER = "sleep";
+    public static final String ZONE_SET_SLEEP_METHOD = "/setSleep";
+    public static final int ZONE_SLEEP_0 = 0;
+    public static final int ZONE_SLEEP_30 = 30;
+    public static final int ZONE_SLEEP_60 = 60;
+    public static final int ZONE_SLEEP_90 = 90;
+    public static final int ZONE_SLEEP_120 = 120;
+    
+    public static final String SET_VOLUME_PARAMETER = "volume";
+    public static final String ZONE_SET_VOLUME_METHOD = "/setVolume";
+    public static final String SET_MUTE_PARAMETER = "enable";
+    public static final String ZONE_SET_MUTE_METHOD = "/setMute";
+    
+    public static final String SET_INPUT_PARAMETER = "input";
+    public static final String ZONE_SET_INPUT_METHOD = "/setInput";
+    public static final String SET_SOUND_PROGRAM_PARAMETER = "program";
+    public static final String ZONE_SET_SOUND_PROGRAM_METHOD = "/setSoundProgram";
+    public static final String ZONE_PREPARE_INPUT_CHANGE_METHOD = "/prepareInputChange";
+
+    public static final String NETWORK_USB_SET_PLAYBACK_PATH = ROOT_PATH + "/netusb/setPlayback";
+    public static final String PLAYBACK_PARAMETER = "playback";
+    public static final String PLAYBACK_PLAY = "play";
+    public static final String PLAYBACK_STOP = "stop";
+    public static final String PLAYBACK_PAUSE = "pause";
+    public static final String PLAYBACK_PLAY_PAUSE = "play_pause";
+    public static final String PLAYBACK_PREVIOUS = "previous";
+    public static final String PLAYBACK_NEXT = "next";
+    public static final String PLAYBACK_FAST_REVERSE_START = "fast_reverse_start";
+    public static final String PLAYBACK_FAST_REVERSE_END = "fast_reverse_end";
+    public static final String PLAYBACK_FAST_FORWARD_START = "fast_forward_start";
+    public static final String PLAYBACK_FAST_FORWARD_END = "fast_forward_end";
 
     /**
      * The names of this enum are part of the protocols!

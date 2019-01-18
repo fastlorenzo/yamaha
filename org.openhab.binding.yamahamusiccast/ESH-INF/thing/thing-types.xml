@@ -9,10 +9,12 @@
 		<description>A Yamaha MusicCast speaker (wx-030, ...) </description>
 
 		<channels>
+            <channel id="zone" typeId="zone" />
             <channel id="power" typeId="power" />
 			<channel id="volume" typeId="volume" />
 			<channel id="mute" typeId="mute" />
 			<channel id="input" typeId="input" />
+			<channel id="playback" typeId="playback" />
 			<channel id="albumArt" typeId="albumArt" />
 		</channels>
 
@@ -31,6 +33,11 @@
 
 	</thing-type>
 
+	<channel-type id="zone">
+		<item-type>String</item-type>
+		<label>Zone</label>
+		<description>Selected zone</description>
+	</channel-type>
 	<channel-type id="power">
 		<item-type>Switch</item-type>
 		<label>Power</label>
@@ -52,6 +59,11 @@
 		<item-type>String</item-type>
 		<label>Input</label>
 		<description>Current speaker input</description>
+	</channel-type>
+	<channel-type id="playback">
+		<item-type>Player</item-type>
+		<label>Playback</label>
+		<description>Current playback status</description>
 	</channel-type>
 	<channel-type id="albumArt">
 	   <item-type>Image</item-type>

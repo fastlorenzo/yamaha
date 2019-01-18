@@ -9,24 +9,54 @@
 
 package org.openhab.binding.yamahamusiccast.internal.api.model;
 
+import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
+
 /**
  * Status
  *
  * @author Dries Decock - Initial contribution
  */
 public class Status extends Response {
-    public final static String url = "/YamahaExtendedControl/v2/main/getStatus";
+    protected String power;
+    protected Integer volume;
+    protected boolean mute;
+    protected Integer max_volume;
+    protected String input;
+    protected boolean distribution_enable;
+    protected String sound_program;
+    protected boolean clear_voice;
+    protected Integer subwoofer_volume;
+    protected String link_control;
+    protected String link_audio_delay;
+    protected String link_audio_quality;
+    protected Integer disable_flags;
 
+    public String zone = "main";
+    public final static String path = "/getStatus";
+    public String url;
+    
     public String getPower() {
         return power;
+    }
+
+    public void setPower(String power) {
+        this.power = power;
     }
 
     public Integer getVolume() {
         return volume;
     }
 
+    public void setVolume(Integer volume) {
+        this.volume = volume;
+    }
+
     public boolean isMute() {
         return mute;
+    }
+
+    public void setMute(boolean mute) {
+        this.mute = mute;
     }
 
     public Integer getMax_volume() {
@@ -35,6 +65,10 @@ public class Status extends Response {
 
     public String getInput() {
         return input;
+    }
+
+    public void setInput(String input) {
+        this.input = input;
     }
 
     public boolean isDistribution_enable() {
@@ -69,18 +103,12 @@ public class Status extends Response {
         return disable_flags;
     }
 
-    protected String power;
-    protected Integer volume;
-    protected boolean mute;
-    protected Integer max_volume;
-    protected String input;
-    protected boolean distribution_enable;
-    protected String sound_program;
-    protected boolean clear_voice;
-    protected Integer subwoofer_volume;
-    protected String link_control;
-    protected String link_audio_delay;
-    protected String link_audio_quality;
-    protected Integer disable_flags;
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
 
+    public String getUrl() {
+        url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone + path;
+        return url;
+    }
 }

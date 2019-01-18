@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.time.LocalTime;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
@@ -42,6 +43,10 @@ import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.yamahamusiccast.internal.YamahaMusicCastThingConfig;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastException;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastRequest;
+import org.openhab.binding.yamahamusiccast.internal.api.MusicCastSystemRequest;
+import org.openhab.binding.yamahamusiccast.internal.api.MusicCastZoneRequest;
+import org.openhab.binding.yamahamusiccast.internal.api.MusicCastNetUSBRequest;
+import org.openhab.binding.yamahamusiccast.internal.api.MusicCastEventRequest;
 import org.openhab.binding.yamahamusiccast.internal.api.model.DeviceInfo;
 import org.openhab.binding.yamahamusiccast.internal.api.model.PlayInfo;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
@@ -64,13 +69,14 @@ import com.google.gson.JsonParser;
  *
  * @author Frank Zimmer - Initial contribution
  * @author Dries Decock - Adding extra channels and refresh from speaker
+ * @author Hector Rodriguez Medina - Code refactoring
  */
 public class YamahaMusicCastHandler extends BaseThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(YamahaMusicCastHandler.class);
     private String host;
-    private static String ON = "on";
-    private static String OFF = "standby";
+    private String slectedZone = "main";
+    private LocalTime lastRefresh;
 
     private HttpClient httpClient;
     private Gson gson;
@@ -78,6 +84,10 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private Status state;
     private PlayInfo playInfo;
     private SubscribeEvent subscribeEvent;
+    private MusicCastSystemRequest systemRequest;
+    private MusicCastZoneRequest zoneRequest;
+    private MusicCastNetUSBRequest netUSBRequest;
+    private MusicCastEventRequest eventRequest;
     private @Nullable ScheduledFuture<?> refreshJob;
     private @Nullable YamahaMusicCastThingConfig config;
 
@@ -87,6 +97,11 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         this.httpClient = new HttpClient();
         this.httpClient.setFollowRedirects(false);
         this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+        this.systemRequest = new MusicCastSystemRequest(gson, httpClient, host);
+        this.zoneRequest = new MusicCastZoneRequest(gson, httpClient, host);
+        this.netUSBRequest = new MusicCastNetUSBRequest(gson, httpClient, host);
+        this.eventRequest = new MusicCastEventRequest(gson, httpClient, host);
+        this.lastRefresh = LocalTime.now().minusMinutes(4);
         state = null;
         info = null;
         playInfo = null;
@@ -116,52 +131,34 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         logger.debug("Handling command = {} for channel = {}", command, channelUID);
-        if (command == REFRESH) {
-            refresh(channelUID);
-        } else {
-            switch (channelUID.getId()) {
-                case CHANNEL_POWER:
-                    if (command.equals(OnOffType.ON)) {
-                        postPowerState(ON);
-                    } else if (command.equals(OnOffType.OFF)) {
-                        postPowerState(OFF);
+        try {
+            if (command == REFRESH) {
+                if(LocalTime.now().isAfter(lastRefresh))
+                    refresh();
+            } else {
+                    switch (channelUID.getId()) {
+                        case CHANNEL_ZONE:
+                            this.slectedZone = command.toString();
+                            break;
+                        case CHANNEL_POWER:
+                            zoneRequest.setPower(slectedZone, command);
+                            break;
+                        case CHANNEL_MUTE:
+                            zoneRequest.setMute(slectedZone, command);
+                            break;
+                        case CHANNEL_INPUT:
+                            zoneRequest.setInput(slectedZone, command);
+                            break;
+                        case CHANNEL_VOLUME:
+                            zoneRequest.setVolume(slectedZone, command);
+                            break;
+                        case CHANNEL_PLAYBACK:
+                            netUSBRequest.setPlayback(command);
+                            break;
                     }
-                    break;
-                case CHANNEL_MUTE:
-                    if (command.equals(OnOffType.ON)) {
-                        postMuteState("true");
-                    } else if (command.equals(OnOffType.OFF)) {
-                        postMuteState("false");
-                    }
-                    break;
-                case CHANNEL_INPUT:
-                    postInput(command.toString());
-                    break;
-                case CHANNEL_VOLUME:
-                    postVolumeState(command.toString());
-                    break;
             }
-        }
-    }
-
-    private void setValue(String url, String key, String value) throws MusicCastException {
-        if (!httpClient.isStarted()) {
-            try {
-                logger.info("Connecting to host.");
-                httpClient.start();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                logger.info("Failed to start HTTP client");
-                //e.printStackTrace();
-            }
-        }
-        MusicCastRequest<Response> setRequest = newRequest(Response.class);
-        setRequest.setPath(url);
-        setRequest.setQueryParameter(key, value);
-        logger.info("Requesting ....");
-        Response response = setRequest.execute();
-        if (response != null) {
-            logger.info("Result is " + response.toString());
+        } catch (MusicCastException e) {
+            logger.debug(e.toString());
         }
     }
 
@@ -178,26 +175,14 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                 }
             }
             if (info == null) {
-                MusicCastRequest<DeviceInfo> infoRequest = newRequest(DeviceInfo.class);
-                infoRequest.setPath(DeviceInfo.url);
-                info = infoRequest.execute();
+                info = systemRequest.getDeviceInfo();
             }
-            MusicCastRequest<Status> statusRequest = newRequest(Status.class);
-            statusRequest.setPath(Status.url);
-            logger.info("Requesting ....");
-            state = statusRequest.execute();
+            state = zoneRequest.getStatus(slectedZone);
             if (state != null) {
-                logger.info("Result is " + state.toString());
+                logger.debug("Result is " + state.toString());
             }
-            MusicCastRequest<PlayInfo> playInfoRequest = newRequest(PlayInfo.class);
-            playInfoRequest.setPath(PlayInfo.url);
-            playInfo = playInfoRequest.execute();
-
-            MusicCastRequest<SubscribeEvent> subscribeEventRequest = newRequest(SubscribeEvent.class);
-            subscribeEventRequest.setPath(SubscribeEvent.url);
-            subscribeEventRequest.setHeaders("X-AppName", SubscribeEvent.appName);
-            subscribeEventRequest.setHeaders("X-AppPort", EVENTS_DEFAULT_PORT);
-            subscribeEvent = subscribeEventRequest.execute();
+            playInfo = netUSBRequest.getPlayInfo();
+            subscribeEvent = eventRequest.subscribeToEvents();
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
             //e.printStackTrace();
@@ -207,8 +192,8 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
 
     private void refresh(ChannelUID channelUID) {
         logger.info("Refresh Channel " + channelUID.getAsString());
-        getUpdate();
-        logger.info("Refreshed everything.");
+        //getUpdate();
+        //logger.info("Refreshed everything.");
         String channelID = channelUID.getId();
         State result = null;
         if (state != null) {
@@ -255,51 +240,6 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         }
     }
 
-    private void postPowerState(String state) {
-        try {
-            setValue("/YamahaExtendedControl/v2/main/setPower", "power", state);
-            //refresh();
-        } catch (MusicCastException e) {
-            // TODO Auto-generated catch block
-            //e.printStackTrace();
-            logger.debug(e.toString());
-        }
-
-    }
-
-    private void postInput(String input) {
-        try {
-            setValue("/YamahaExtendedControl/v2/main/setInput", "input", input);
-            //refresh();
-        } catch (MusicCastException e) {
-            // TODO Auto-generated catch block
-            //e.printStackTrace();
-            logger.debug(e.toString());
-        }
-    }
-
-    private void postVolumeState(String volume) {
-        try {
-            setValue("/YamahaExtendedControl/v2/main/setVolume", "volume", volume);
-            //refresh();
-        } catch (MusicCastException e) {
-            // TODO Auto-generated catch block
-            //e.printStackTrace();
-            logger.debug(e.toString());
-        }
-    }
-
-    private void postMuteState(String mute) {
-        try {
-            setValue("/YamahaExtendedControl/v2/main/setMute", "enable", mute);
-            //refresh();
-        } catch (MusicCastException e) {
-            // TODO Auto-generated catch block
-            //e.printStackTrace();
-            logger.debug(e.toString());
-        }
-    }
-
     @Override
     protected void updateStatus(ThingStatus status, ThingStatusDetail statusDetail, @Nullable String description) {
         if (status == ONLINE || (status == OFFLINE && statusDetail == COMMUNICATION_ERROR)) {
@@ -318,6 +258,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private void refresh() throws MusicCastException {
         logger.debug("Refreshing the MusicCast speaker {}", getThing().getUID());
         getUpdate();
+        this.lastRefresh = LocalTime.now().plusMinutes(3);
 /*         for (Channel channel : getThing().getChannels()) {
             ChannelUID channelUID = channel.getUID();
             refresh(channelUID);
@@ -345,6 +286,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                 url = new URL(urlString);
                 result = new RawType(readImage(url).toByteArray(), "image/jpeg");
                 updateState(CHANNEL_ALBUM_ART, result);
+                logger.debug("Updating album art");
             } catch (MalformedURLException e1) {
                 // TODO Auto-generated catch block
                 //e1.printStackTrace();
@@ -420,6 +362,19 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                 updateState(CHANNEL_INPUT, result);
             }
         }
+        
+        if (netUSBMessage != null) {
+            if (netUSBMessage.getPlayInfoUpdated() instanceof Boolean) {
+                if (netUSBMessage.getPlayInfoUpdated()) {
+                    try {
+                        playInfo = netUSBRequest.getPlayInfo();
+                        refresh(getThing().getChannel(CHANNEL_ALBUM_ART).getUID());
+                    } catch (MusicCastException e) {
+                        logger.debug(e.toString());
+                    }
+                }
+            }
+        }        
 
 //        this.updateStatus(ThingStatus.ONLINE);
 //        this.latestUpdate = System.currentTimeMillis();
@@ -457,10 +412,6 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                 refreshJob = null;
             }
         }
-    }
-
-    private <T> MusicCastRequest<T> newRequest(Class<T> responseType) {
-        return new MusicCastRequest<T>(responseType, gson, httpClient, host, 80);
     }
 
     private static ByteArrayOutputStream readImage(URL url) throws Exception {

@@ -90,8 +90,19 @@ public class MusicCastRequest<T> {
         this.port = port;
     }
 
+    public MusicCastRequest(Gson gson, HttpClient httpClient, String host, int port) {
+        this.gson = gson;
+        this.httpClient = httpClient;
+        this.host = host;
+        this.port = port;
+    }
+
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public void setResultType(Class<T> resultType) {
+        this.resultType = resultType;
     }
 
     public void setBodyParameter(String key, Object value) {
