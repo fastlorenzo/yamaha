@@ -116,6 +116,18 @@ public class MusicCastRequest<T> {
     public void setHeaders(String key, Object value) {
         this.requestHeaders.put(key, String.valueOf(value));
     }
+    
+    public void clearBodyParameter() {
+        this.bodyParameters.clear();
+    }
+
+    public void clearQueryParameter() {
+        this.queryParameters.clear();
+    }
+
+    public void clearHeaders() {
+        this.requestHeaders.clear();
+    }
 
     public <@Nullable T extends @Nullable Response> @Nullable T execute() throws MusicCastException {
         T result = null;

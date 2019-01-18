@@ -68,6 +68,7 @@ public class MusicCastNetUSBRequest<T> extends MusicCastRequest<T> {
         String playback = "";
         Response response;
         setPath(YamahaMusicCastBindingConstants.NETWORK_USB_SET_PLAYBACK_PATH);
+        clearQueryParameter();
 
         if (command == PlayPauseType.PLAY) {
             playback = YamahaMusicCastBindingConstants.PLAYBACK_PLAY_PAUSE;

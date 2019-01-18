@@ -58,6 +58,7 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
         String power = "";
         Response response;
         setPath(url);
+        clearQueryParameter();
 
         if (command == OnOffType.ON) {
             power = YamahaMusicCastBindingConstants.ZONE_POWER_ON;
@@ -76,6 +77,7 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
         String volume = command.toString();
         Response response;
         setPath(url);
+        clearQueryParameter();
         setQueryParameter(YamahaMusicCastBindingConstants.SET_VOLUME_PARAMETER, volume);
         response = execute();
         return response;
@@ -87,6 +89,7 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
         boolean mute = false;
         Response response;
         setPath(url);
+        clearQueryParameter();
 
         if (command == OnOffType.ON) {
             mute = true;
@@ -105,6 +108,7 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
         String input = command.toString();
         Response response;
         setPath(url);
+        clearQueryParameter();
         setQueryParameter(YamahaMusicCastBindingConstants.SET_INPUT_PARAMETER, input);
         response = execute();
         return response;
