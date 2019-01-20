@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Returns Tuner related information 
  *
@@ -17,9 +15,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class TunerEvent {
 
-    @SerializedName("play_info_updated")
     protected Boolean playInfoUpdated;
-    @SerializedName("preset_info_updated")
     protected Boolean presetInfoUpdated;
 
     /*

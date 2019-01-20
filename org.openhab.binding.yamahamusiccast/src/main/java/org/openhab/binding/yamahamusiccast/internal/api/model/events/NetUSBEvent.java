@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Returns Net/USB related information
  *
@@ -17,31 +15,19 @@ import com.google.gson.annotations.SerializedName;
  */
 public class NetUSBEvent {
 
-    @SerializedName("play_error")
     protected Integer playError;
-    @SerializedName("multiple_play_errors")
     protected Integer multiplePlayErrors;
-    @SerializedName("play_message")
     protected String playMessage;
-    @SerializedName("account_updated")
     protected Boolean accountUpdated;
-    @SerializedName("play_time")
     protected Integer playTime;
-    @SerializedName("preset_info_updated")
     protected Boolean presetInfoUpdated;
-    @SerializedName("recent_info_updated")
     protected Boolean recentInfoUpdated;
-    @SerializedName("preset_control")
     protected PresetControl presetControl;
 /*
-    @SerializedName("trial_status")
     protected TrialStatus trialStatus;
-    @SerializedName("trial_time_left")
     protected TrialTimeLeft trialTimeLeft;
 */
-    @SerializedName("play_info_updated")
     protected Boolean playInfoUpdated;
-    @SerializedName("list_info_updated")
     protected Boolean listInfoUpdated;
 
     /*

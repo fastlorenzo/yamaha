@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Returns CD related information 
  *
@@ -17,11 +15,8 @@ import com.google.gson.annotations.SerializedName;
  */
 public class CdEvent {
 
-    @SerializedName("device_status")
     protected String deviceStatus;
-    @SerializedName("play_time")
     protected Integer playTime;
-    @SerializedName("play_info_updated")
     protected Boolean playInfoUpdated;
 
     /*

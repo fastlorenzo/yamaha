@@ -161,7 +161,7 @@ public class MusicCastRequest<T> {
                  * (100s are Streaming Service related errors)
                  * 100 Access Error
                  */
-                switch (result.getResponse_code()) {
+                switch (result.getResponseCode()) {
                     case 0: {
                         // Great
                         break;
@@ -192,7 +192,7 @@ public class MusicCastRequest<T> {
                         throw new MusicCastException("Access Error");
                     }
                     default: {
-                        throw new MusicCastException("Unknown MusicCast id : " + result.getResponse_code());
+                        throw new MusicCastException("Unknown MusicCast id : " + result.getResponseCode());
                     }
                 }
             }

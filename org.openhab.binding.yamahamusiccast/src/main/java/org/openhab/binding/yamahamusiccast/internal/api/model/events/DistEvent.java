@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Returns Link distribution related information 
  *
@@ -17,7 +15,6 @@ import com.google.gson.annotations.SerializedName;
  */
 public class DistEvent {
 
-    @SerializedName("dist_info_updated")
     protected Boolean distInfoUpdated;
 
     /*

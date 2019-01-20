@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Return s Device ID.ID is same value using /system/getDeviceInfo Note:
  * Available on and after API Version 1.17
@@ -18,7 +16,6 @@ import com.google.gson.annotations.SerializedName;
  */
 public class IdEvent {
 
-    @SerializedName("device_id")
     protected String deviceId;
 
     public String getDeviceId() {

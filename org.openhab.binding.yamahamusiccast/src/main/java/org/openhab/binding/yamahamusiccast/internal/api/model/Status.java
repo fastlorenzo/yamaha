@@ -20,16 +20,16 @@ public class Status extends Response {
     protected String power;
     protected Integer volume;
     protected boolean mute;
-    protected Integer max_volume;
+    protected Integer maxVolume;
     protected String input;
-    protected boolean distribution_enable;
-    protected String sound_program;
-    protected boolean clear_voice;
-    protected Integer subwoofer_volume;
-    protected String link_control;
-    protected String link_audio_delay;
-    protected String link_audio_quality;
-    protected Integer disable_flags;
+    protected boolean distributionEnable;
+    protected String soundProgram;
+    protected boolean clearVoice;
+    protected Integer subwooferVolume;
+    protected String linkControl;
+    protected String linkAudioDelay;
+    protected String linkAudioQuality;
+    protected Integer disableFlags;
 
     public String zone = "main";
     public final static String path = "/getStatus";
@@ -59,8 +59,8 @@ public class Status extends Response {
         this.mute = mute;
     }
 
-    public Integer getMax_volume() {
-        return max_volume;
+    public Integer getMaxVolume() {
+        return maxVolume;
     }
 
     public String getInput() {
@@ -71,36 +71,36 @@ public class Status extends Response {
         this.input = input;
     }
 
-    public boolean isDistribution_enable() {
-        return distribution_enable;
+    public boolean isDistributionEnable() {
+        return distributionEnable;
     }
 
-    public String getSound_program() {
-        return sound_program;
+    public String getSoundProgram() {
+        return soundProgram;
     }
 
-    public boolean isClear_voice() {
-        return clear_voice;
+    public boolean isClearVoice() {
+        return clearVoice;
     }
 
-    public Integer getSubwoofer_volume() {
-        return subwoofer_volume;
+    public Integer getSubwooferVolume() {
+        return subwooferVolume;
     }
 
-    public String getLink_control() {
-        return link_control;
+    public String getLinkControl() {
+        return linkControl;
     }
 
-    public String getLink_audio_delay() {
-        return link_audio_delay;
+    public String getLinkAudioDelay() {
+        return linkAudioDelay;
     }
 
-    public String getLink_audio_quality() {
-        return link_audio_quality;
+    public String getLinkAudioQuality() {
+        return linkAudioQuality;
     }
 
-    public Integer getDisable_flags() {
-        return disable_flags;
+    public Integer getDisableFlags() {
+        return disableFlags;
     }
 
     public void setZone(String zone) {

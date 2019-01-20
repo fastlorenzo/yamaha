@@ -16,6 +16,10 @@
 			<channel id="input" typeId="input" />
 			<channel id="playback" typeId="playback" />
 			<channel id="albumArt" typeId="albumArt" />
+			<channel id="artist" typeId="artist" />
+			<channel id="album" typeId="album" />
+			<channel id="track" typeId="track" />
+			<channel id="albumArtUrl" typeId="albumArtUrl" />
 		</channels>
 
 		<config-description>
@@ -70,5 +74,25 @@
 	   <label>Album art</label>
 	   <description>Current album art.</description>
 	   <state readOnly="true"></state>
+	</channel-type>
+	<channel-type id="artist">
+		<item-type>String</item-type>
+		<label>Artist</label>
+		<description>Current artist</description>
+	</channel-type>
+	<channel-type id="album">
+		<item-type>String</item-type>
+		<label>Album</label>
+		<description>Current album</description>
+	</channel-type>
+	<channel-type id="track">
+		<item-type>String</item-type>
+		<label>Track</label>
+		<description>Current track</description>
+	</channel-type>
+	<channel-type id="albumArtUrl" advanced="true">
+		<item-type>String</item-type>
+		<label>Albumart url</label>
+		<description>Current albumart url</description>
 	</channel-type>
 </thing:thing-descriptions>

@@ -36,7 +36,11 @@ public class YamahaMusicCastBindingConstants {
     public static final String CHANNEL_INPUT = "input";
     public static final String CHANNEL_PLAYBACK = "playback";
     public static final String CHANNEL_ALBUM_ART = "albumArt";
-
+    public static final String CHANNEL_ARTIST = "artist";
+    public static final String CHANNEL_ALBUM = "album";
+    public static final String CHANNEL_TRACK = "track";
+    public static final String CHANNEL_ALBUMART_URL = "albumArtUrl";
+    
     // The supported thing types
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SPEAKER);
 

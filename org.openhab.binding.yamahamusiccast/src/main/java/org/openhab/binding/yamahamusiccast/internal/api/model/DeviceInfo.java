@@ -19,44 +19,44 @@ public class DeviceInfo extends Response {
 
     public final static String url = "/YamahaExtendedControl/v2/system/getDeviceInfo";
 
-    protected String model_name;
+    protected String modelName;
 
     protected String destination;
 
-    protected String device_id;
+    protected String deviceId;
 
-    protected float system_version;
+    protected float systemVersion;
 
-    protected float api_version;
+    protected float apiVersion;
 
-    protected String netmodule_version;
+    protected String netmoduleVersion;
 
     public static String getUrl() {
         return url;
     }
 
-    public String getModel_name() {
-        return model_name;
+    public String getModelName() {
+        return modelName;
     }
 
     public String getDestination() {
         return destination;
     }
 
-    public String getDevice_id() {
-        return device_id;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public float getSystem_version() {
-        return system_version;
+    public float getSystemVersion() {
+        return systemVersion;
     }
 
-    public float getApi_version() {
-        return api_version;
+    public float getApiVersion() {
+        return apiVersion;
     }
 
-    public String getNetmodule_version() {
-        return netmodule_version;
+    public String getNetmoduleVersion() {
+        return netmoduleVersion;
     }
 
 }

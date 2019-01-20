@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Returns information related to Zone 
  *
@@ -21,9 +19,7 @@ public class ZoneEvent {
     protected String input;
     protected Integer volume;
     protected Boolean mute;
-    @SerializedName("status_updated")
     protected Boolean statusUpdated;
-    @SerializedName("signal_info_updated")
     protected Boolean signalInfoUpdated;
 
     /*

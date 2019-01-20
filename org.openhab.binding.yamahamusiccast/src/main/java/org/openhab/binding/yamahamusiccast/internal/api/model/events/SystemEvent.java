@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Returns System related information 
  *
@@ -17,19 +15,12 @@ import com.google.gson.annotations.SerializedName;
  */
 public class SystemEvent {
 
-    @SerializedName("bluetooth_info_updated")
     protected Boolean bluetoothInfoUpdated;
-    @SerializedName("func_status_updated")
     protected Boolean funcStatusUpdated;
-    @SerializedName("speaker_settings_updated")
     protected Boolean speakerSettingsUpdated;
-    @SerializedName("name_text_updated")
     protected Boolean nameTextUpdated;
-    @SerializedName("tag_updated")
     protected Boolean tagUpdated;
-    @SerializedName("location_info_updated")
     protected Boolean locationInfoUpdated;
-    @SerializedName("stereo_pair_info_updated")
     protected Boolean stereoPairInfoUpdated;
 
     /**

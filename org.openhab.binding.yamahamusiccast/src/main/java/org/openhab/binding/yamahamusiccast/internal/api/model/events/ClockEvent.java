@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Returns Clock related information 
  *
@@ -17,7 +15,6 @@ import com.google.gson.annotations.SerializedName;
  */
 public class ClockEvent {
 
-    @SerializedName("settings_updated")
     protected Boolean settingsUpdated;
 
     /*

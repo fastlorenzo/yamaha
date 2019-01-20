@@ -75,6 +75,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(YamahaMusicCastHandler.class);
     private String host;
+    String urlString = "http://";
     private String slectedZone = "main";
     private LocalTime lastRefresh;
 
@@ -199,7 +200,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
         if (state != null) {
             switch (channelID) {
                 case CHANNEL_VOLUME:
-                    result = new PercentType(state.getVolume() * 100 / state.getMax_volume());
+                    result = new PercentType(state.getVolume() * 100 / state.getMaxVolume());
                     break;
                 case CHANNEL_POWER:
                     result = OnOffType.from(state.getPower());
@@ -210,12 +211,13 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                 case CHANNEL_INPUT:
                     result = StringType.valueOf(state.getInput());
                     break;
+                case CHANNEL_ALBUMART_URL:
                 case CHANNEL_ALBUM_ART:
-                    String urlString = "http://" + host;
-                    if (playInfo.getAlbumart_url().isEmpty()) {
+                    urlString = "http://" + host;
+                    if (playInfo.getAlbumartUrl().isEmpty()) {
                         urlString += ":49154/Icons/120x120.jpg";
                     } else {
-                        urlString += playInfo.getAlbumart_url();
+                        urlString += playInfo.getAlbumartUrl();
                     }
                     URL url;
                     logger.debug("Getting image from " + urlString);
@@ -231,12 +233,25 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                         //e.printStackTrace();
                         logger.debug(e.toString());
                     }
-
+                    break;
+                case CHANNEL_ARTIST:
+                    result = StringType.valueOf(playInfo.getArtist());
+                    break;
+                case CHANNEL_ALBUM:
+                    result = StringType.valueOf(playInfo.getAlbum());
+                    break;
+                case CHANNEL_TRACK:
+                    result = StringType.valueOf(playInfo.getTrack());
                     break;
             }
         }
         if (result != null) {
-            updateState(channelID, result);
+            if (channelID == CHANNEL_ALBUMART_URL || channelID == CHANNEL_ALBUM_ART) {
+                updateState(CHANNEL_ALBUMART_URL, StringType.valueOf(urlString));
+                updateState(CHANNEL_ALBUM_ART, result);                 
+            } else {
+                updateState(channelID, result);
+            }
         }
     }
 
@@ -266,7 +281,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
  */
         if (state != null) {
             State result = null;
-            result = new PercentType(state.getVolume() * 100 / state.getMax_volume());
+            result = new PercentType(state.getVolume() * 100 / state.getMaxVolume());
             updateState(CHANNEL_VOLUME, result);
             result = OnOffType.from(state.getPower());
             updateState(CHANNEL_POWER, result);
@@ -275,11 +290,12 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
             result = StringType.valueOf(state.getInput());
             updateState(CHANNEL_INPUT, result);
             String urlString = "http://" + host;
-            if (playInfo.getAlbumart_url().isEmpty()) {
+            if (playInfo.getAlbumartUrl().isEmpty()) {
                 urlString += ":49154/Icons/120x120.jpg";
             } else {
-                urlString += playInfo.getAlbumart_url();
+                urlString += playInfo.getAlbumartUrl();
             }
+            updateState(CHANNEL_ALBUMART_URL, StringType.valueOf(urlString));
             URL url;
             logger.debug("Getting image from " + urlString);
             try {
@@ -296,6 +312,12 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                 //e.printStackTrace();
                 logger.debug(e.toString());
             }
+            result = StringType.valueOf(playInfo.getArtist());
+            updateState(CHANNEL_ARTIST, result);
+            result = StringType.valueOf(playInfo.getAlbum());
+            updateState(CHANNEL_ALBUM, result);
+            result = StringType.valueOf(playInfo.getTrack());
+            updateState(CHANNEL_TRACK, result);
         }
     }
 
@@ -344,7 +366,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
 
         if (zoneMessage != null) {
             if (zoneMessage.getVolume() instanceof Integer) {
-                Integer maxVolume = (state != null) ? state.getMax_volume() : 100;
+                Integer maxVolume = (state != null) ? state.getMaxVolume() : 100;
                 result = new PercentType(zoneMessage.getVolume() * 100 / maxVolume);
                 updateState(CHANNEL_VOLUME, result);
             }
@@ -369,6 +391,9 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                     try {
                         playInfo = netUSBRequest.getPlayInfo();
                         refresh(getThing().getChannel(CHANNEL_ALBUM_ART).getUID());
+                        refresh(getThing().getChannel(CHANNEL_ARTIST).getUID());
+                        refresh(getThing().getChannel(CHANNEL_ALBUM).getUID());
+                        refresh(getThing().getChannel(CHANNEL_TRACK).getUID());
                     } catch (MusicCastException e) {
                         logger.debug(e.toString());
                     }
