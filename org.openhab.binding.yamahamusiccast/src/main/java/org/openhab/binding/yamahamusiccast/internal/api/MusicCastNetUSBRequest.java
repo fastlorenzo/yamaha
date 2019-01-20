@@ -71,9 +71,9 @@ public class MusicCastNetUSBRequest<T> extends MusicCastRequest<T> {
         clearQueryParameter();
 
         if (command == PlayPauseType.PLAY) {
-            playback = YamahaMusicCastBindingConstants.PLAYBACK_PLAY_PAUSE;
+            playback = YamahaMusicCastBindingConstants.PLAYBACK_PLAY;
         } else if (command == PlayPauseType.PAUSE) {
-                playback = YamahaMusicCastBindingConstants.PLAYBACK_PLAY_PAUSE;
+                playback = YamahaMusicCastBindingConstants.PLAYBACK_PAUSE;
         } else if (command == StopMoveType.STOP) {
                 playback = YamahaMusicCastBindingConstants.PLAYBACK_STOP;
         } else if (command == NextPreviousType.NEXT) {

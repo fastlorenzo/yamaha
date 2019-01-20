@@ -211,6 +211,9 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                 case CHANNEL_INPUT:
                     result = StringType.valueOf(state.getInput());
                     break;
+                case CHANNEL_PLAYBACK:
+                    result = StringType.valueOf(playInfo.getPlayback());
+                    break;
                 case CHANNEL_ALBUMART_URL:
                 case CHANNEL_ALBUM_ART:
                     urlString = "http://" + host;
@@ -289,6 +292,8 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
             updateState(CHANNEL_MUTE, result);
             result = StringType.valueOf(state.getInput());
             updateState(CHANNEL_INPUT, result);
+            result = StringType.valueOf(playInfo.getPlayback());
+            updateState(CHANNEL_PLAYBACK, result);
             String urlString = "http://" + host;
             if (playInfo.getAlbumartUrl().isEmpty()) {
                 urlString += ":49154/Icons/120x120.jpg";
@@ -394,6 +399,7 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                         refresh(getThing().getChannel(CHANNEL_ARTIST).getUID());
                         refresh(getThing().getChannel(CHANNEL_ALBUM).getUID());
                         refresh(getThing().getChannel(CHANNEL_TRACK).getUID());
+                        refresh(getThing().getChannel(CHANNEL_PLAYBACK).getUID());
                     } catch (MusicCastException e) {
                         logger.debug(e.toString());
                     }
