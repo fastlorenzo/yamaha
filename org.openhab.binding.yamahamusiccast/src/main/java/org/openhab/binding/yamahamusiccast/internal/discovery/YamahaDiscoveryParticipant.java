@@ -65,6 +65,7 @@ public class YamahaDiscoveryParticipant implements UpnpDiscoveryParticipant {
 
         URL url = device.getIdentity().getDescriptorURL();
         properties.put(YamahaMusicCastBindingConstants.Configs.CONFIG_HOST_NAME, url.getHost());
+        properties.put(YamahaMusicCastBindingConstants.Configs.CONFIG_UDN, device.getIdentity().getUdn().getIdentifierString());
         properties.put(YamahaMusicCastBindingConstants.DESC_FRIENDLY_NAME, device.getDetails().getFriendlyName());
         properties.put(YamahaMusicCastBindingConstants.DESC_MODEL_NAME, device.getDetails().getModelDetails().getModelName());
         properties.put(YamahaMusicCastBindingConstants.DESC_SERIAL_NUMBER, device.getDetails().getSerialNumber());

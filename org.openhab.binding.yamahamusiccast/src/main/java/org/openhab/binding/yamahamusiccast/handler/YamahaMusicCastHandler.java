@@ -26,6 +26,7 @@ import java.time.LocalTime;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.config.core.Configuration;
+import org.eclipse.smarthome.core.audio.AudioHTTPServer;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.library.types.RawType;
@@ -36,10 +37,10 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingStatusInfo;
-import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.builder.ThingStatusInfoBuilder;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.State;
+import org.eclipse.smarthome.io.transport.upnp.UpnpIOService;
 import org.openhab.binding.yamahamusiccast.internal.YamahaMusicCastThingConfig;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastException;
 import org.openhab.binding.yamahamusiccast.internal.api.MusicCastRequest;
@@ -71,7 +72,7 @@ import com.google.gson.JsonParser;
  * @author Dries Decock - Adding extra channels and refresh from speaker
  * @author Hector Rodriguez Medina - Code refactoring
  */
-public class YamahaMusicCastHandler extends BaseThingHandler {
+public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
 
     private Logger logger = LoggerFactory.getLogger(YamahaMusicCastHandler.class);
     private String host;
@@ -92,8 +93,8 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
     private @Nullable ScheduledFuture<?> refreshJob;
     private @Nullable YamahaMusicCastThingConfig config;
 
-    public YamahaMusicCastHandler(Thing thing) {
-        super(thing);
+    public YamahaMusicCastHandler(Thing thing, UpnpIOService upnpIOService, AudioHTTPServer audioHTTPServer, String callbackUrl) {
+        super(thing, upnpIOService, audioHTTPServer, callbackUrl);
         host = (String) getConfig().get("host");
         this.httpClient = new HttpClient();
         this.httpClient.setFollowRedirects(false);
@@ -155,6 +156,9 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
                             break;
                         case CHANNEL_PLAYBACK:
                             netUSBRequest.setPlayback(command);
+                            break;
+                        case CHANNEL_PLAY_URI:
+                            handlePlayUri(command);
                             break;
                     }
             }
@@ -409,6 +413,23 @@ public class YamahaMusicCastHandler extends BaseThingHandler {
 
 //        this.updateStatus(ThingStatus.ONLINE);
 //        this.latestUpdate = System.currentTimeMillis();
+    }
+
+    @Override
+    public PercentType getVolume() throws IOException {
+        if (state.getVolume() instanceof Integer) {
+                return new PercentType(state.getVolume() * 100 / state.getMaxVolume());
+        }
+        throw new IOException();
+    }
+
+    @Override
+    public void setVolume(PercentType volume) throws IOException {
+        try {
+            zoneRequest.setVolume(slectedZone, volume);
+        } catch (MusicCastException e) {
+            logger.debug(e.toString());
+        }
     }
 
     private void run() {

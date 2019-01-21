@@ -20,6 +20,7 @@
 			<channel id="album" typeId="album" />
 			<channel id="track" typeId="track" />
 			<channel id="albumArtUrl" typeId="albumArtUrl" />
+			<channel id="playuri" typeId="playuri" />
 		</channels>
 
 		<config-description>
@@ -33,6 +34,11 @@
 				<default>540</default>
 				<description>Time between two updates from the MusicCast device. Unit: seconds.</description>
 			</parameter>
+            <parameter name="udn" type="text">
+                <label>Unique Device Name</label>
+                <description>The UDN identifies the yamaha musiccast speaker.</description>
+                <advanced>true</advanced>
+            </parameter>
 		</config-description>
 
 	</thing-type>
@@ -94,5 +100,10 @@
 		<item-type>String</item-type>
 		<label>Albumart url</label>
 		<description>Current albumart url</description>
+	</channel-type>
+	<channel-type id="playuri" advanced="true">
+		<item-type>String</item-type>
+		<label>Play URI</label>
+		<description>Plays a given URI</description>
 	</channel-type>
 </thing:thing-descriptions>

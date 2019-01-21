@@ -40,6 +40,7 @@ public class YamahaMusicCastBindingConstants {
     public static final String CHANNEL_ALBUM = "album";
     public static final String CHANNEL_TRACK = "track";
     public static final String CHANNEL_ALBUMART_URL = "albumArtUrl";
+    public static final String CHANNEL_PLAY_URI = "playuri";
     
     // The supported thing types
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SPEAKER);
@@ -48,6 +49,7 @@ public class YamahaMusicCastBindingConstants {
     public static class Configs {
         public static final String CONFIG_HOST_NAME = "host";
         public static final String CONFIG_ZONE = "zone";
+        public static final String CONFIG_UDN = "udn";
     }
 
     // Default UDP listening events  port
