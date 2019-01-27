@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.IncreaseDecreaseType;
 import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Status;
@@ -74,7 +75,14 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
     public Response setVolume(String zone, Command command) throws MusicCastException {
         setResultType((Class<T>) Response.class);
         String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone + YamahaMusicCastBindingConstants.ZONE_SET_VOLUME_METHOD;
-        String volume = command.toString();
+        String volume;
+        if (command == IncreaseDecreaseType.INCREASE) {
+            volume = "up";
+        } else if (command == IncreaseDecreaseType.DECREASE) {
+            volume = "down";
+        } else {
+            volume = command.toString();
+        }
         Response response;
         setPath(url);
         clearQueryParameter();
