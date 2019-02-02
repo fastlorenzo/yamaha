@@ -152,7 +152,7 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
                             zoneRequest.setInput(slectedZone, command);
                             break;
                         case CHANNEL_VOLUME:
-                            zoneRequest.setVolume(slectedZone, command);
+                            zoneRequest.setVolume(slectedZone, command, state.getMaxVolume());
                             break;
                         case CHANNEL_PLAYBACK:
                             netUSBRequest.setPlayback(command);
@@ -426,7 +426,7 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
     @Override
     public void setVolume(PercentType volume) throws IOException {
         try {
-            zoneRequest.setVolume(slectedZone, volume);
+            zoneRequest.setVolume(slectedZone, volume, state.getMaxVolume());
         } catch (MusicCastException e) {
             logger.debug(e.toString());
         }

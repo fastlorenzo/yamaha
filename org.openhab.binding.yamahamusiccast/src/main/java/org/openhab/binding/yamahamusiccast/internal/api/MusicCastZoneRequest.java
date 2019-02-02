@@ -72,16 +72,18 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
         return response;
     }
     
-    public Response setVolume(String zone, Command command) throws MusicCastException {
+    public Response setVolume(String zone, Command command, Integer maxVolume) throws MusicCastException {
         setResultType((Class<T>) Response.class);
         String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone + YamahaMusicCastBindingConstants.ZONE_SET_VOLUME_METHOD;
+        Integer adjustedVolume;
         String volume;
         if (command == IncreaseDecreaseType.INCREASE) {
             volume = "up";
         } else if (command == IncreaseDecreaseType.DECREASE) {
             volume = "down";
         } else {
-            volume = command.toString();
+            adjustedVolume = Integer.valueOf(command.toString()) * maxVolume / 100;
+            volume = adjustedVolume.toString();
         }
         Response response;
         setPath(url);
