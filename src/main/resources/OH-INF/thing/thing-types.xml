@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="yamahamusiccast"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="speaker">
+		<label>YamahaMusicCast Speaker</label>
+		<description>A Yamaha MusicCast speaker (wx-030, ...) </description>
+
+		<channels>
+			<channel id="zone" typeId="zone"/>
+			<channel id="power" typeId="power"/>
+			<channel id="volume" typeId="volume"/>
+			<channel id="mute" typeId="mute"/>
+			<channel id="input" typeId="input"/>
+			<channel id="playback" typeId="playback"/>
+			<channel id="albumArt" typeId="albumArt"/>
+			<channel id="artist" typeId="artist"/>
+			<channel id="album" typeId="album"/>
+			<channel id="track" typeId="track"/>
+			<channel id="albumArtUrl" typeId="albumArtUrl"/>
+			<channel id="playuri" typeId="playuri"/>
+		</channels>
+
+		<config-description>
+			<parameter name="host" type="text" required="true">
+				<label>Host</label>
+				<default>192.168.2.x</default>
+				<description>YAMAHA MusicCast Device IP address</description>
+			</parameter>
+			<parameter name="refresh" type="integer" required="true" min="1">
+				<label>Refresh interval</label>
+				<default>540</default>
+				<description>Time between two updates from the MusicCast device. Unit: seconds.</description>
+			</parameter>
+			<parameter name="udn" type="text">
+				<label>Unique Device Name</label>
+				<description>The UDN identifies the yamaha musiccast speaker.</description>
+				<advanced>true</advanced>
+			</parameter>
+		</config-description>
+
+	</thing-type>
+
+	<channel-type id="zone">
+		<item-type>String</item-type>
+		<label>Zone</label>
+		<description>Selected zone</description>
+	</channel-type>
+	<channel-type id="power">
+		<item-type>Switch</item-type>
+		<label>Power</label>
+		<description>Power</description>
+	</channel-type>
+	<channel-type id="volume">
+		<item-type>Dimmer</item-type>
+		<label>Volume</label>
+		<description>Volume</description>
+		<category>SoundVolume</category>
+		<state min="0" max="100"/>
+	</channel-type>
+	<channel-type id="mute">
+		<item-type>Switch</item-type>
+		<label>Mute</label>
+		<description>soundvolume_mute</description>
+	</channel-type>
+	<channel-type id="input">
+		<item-type>String</item-type>
+		<label>Input</label>
+		<description>Current speaker input</description>
+	</channel-type>
+	<channel-type id="playback">
+		<item-type>Player</item-type>
+		<label>Playback</label>
+		<description>Current playback status</description>
+	</channel-type>
+	<channel-type id="albumArt">
+		<item-type>Image</item-type>
+		<label>Album art</label>
+		<description>Current album art.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+	<channel-type id="artist">
+		<item-type>String</item-type>
+		<label>Artist</label>
+		<description>Current artist</description>
+	</channel-type>
+	<channel-type id="album">
+		<item-type>String</item-type>
+		<label>Album</label>
+		<description>Current album</description>
+	</channel-type>
+	<channel-type id="track">
+		<item-type>String</item-type>
+		<label>Track</label>
+		<description>Current track</description>
+	</channel-type>
+	<channel-type id="albumArtUrl" advanced="true">
+		<item-type>String</item-type>
+		<label>Albumart url</label>
+		<description>Current albumart url</description>
+	</channel-type>
+	<channel-type id="playuri" advanced="true">
+		<item-type>String</item-type>
+		<label>Play URI</label>
+		<description>Plays a given URI</description>
+	</channel-type>
+</thing:thing-descriptions>

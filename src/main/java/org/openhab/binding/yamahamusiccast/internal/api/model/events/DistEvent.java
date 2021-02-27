@@ -9,7 +9,7 @@
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
 /**
- * Returns Link distribution related information 
+ * Returns Link distribution related information
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
@@ -18,7 +18,8 @@ public class DistEvent {
     protected Boolean distInfoUpdated;
 
     /*
-     * Returns whether or not Link distribution Device info has changed. If so, pull renewed info using /dist/getDistributionInfo
+     * Returns whether or not Link distribution Device info has changed. If so, pull renewed info using
+     * /dist/getDistributionInfo
      */
     public Boolean getDistInfoUpdated() {
         return distInfoUpdated;

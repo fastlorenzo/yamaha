@@ -14,22 +14,22 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.smarthome.core.audio.AudioException;
-import org.eclipse.smarthome.core.audio.AudioFormat;
-import org.eclipse.smarthome.core.audio.AudioHTTPServer;
-import org.eclipse.smarthome.core.audio.AudioSink;
-import org.eclipse.smarthome.core.audio.AudioStream;
-import org.eclipse.smarthome.core.audio.FixedLengthAudioStream;
-import org.eclipse.smarthome.core.audio.URLAudioStream;
-import org.eclipse.smarthome.core.audio.UnsupportedAudioFormatException;
-import org.eclipse.smarthome.core.audio.UnsupportedAudioStreamException;
-import org.eclipse.smarthome.core.library.types.StringType;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.io.transport.upnp.UpnpIOParticipant;
-import org.eclipse.smarthome.io.transport.upnp.UpnpIOService;
 import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
+import org.openhab.core.audio.AudioException;
+import org.openhab.core.audio.AudioFormat;
+import org.openhab.core.audio.AudioHTTPServer;
+import org.openhab.core.audio.AudioSink;
+import org.openhab.core.audio.AudioStream;
+import org.openhab.core.audio.FixedLengthAudioStream;
+import org.openhab.core.audio.URLAudioStream;
+import org.openhab.core.audio.UnsupportedAudioFormatException;
+import org.openhab.core.audio.UnsupportedAudioStreamException;
+import org.openhab.core.io.transport.upnp.UpnpIOParticipant;
+import org.openhab.core.io.transport.upnp.UpnpIOService;
+import org.openhab.core.library.types.StringType;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.binding.BaseThingHandler;
+import org.openhab.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,12 +73,12 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
             String url = command.toString();
             if (url.startsWith("http")) {
                 try {
-                    //playMedia(command.toString());
+                    // playMedia(command.toString());
                     AudioStream audioStream = new URLAudioStream(url);
                     try {
                         process(audioStream);
-                    //} catch (IllegalStateException e) {
-                    //    logger.warn("Cannot play URI ({})", e.getMessage());
+                        // } catch (IllegalStateException e) {
+                        // logger.warn("Cannot play URI ({})", e.getMessage());
                     } catch (UnsupportedAudioFormatException e1) {
                         logger.debug(e1.toString());
                     } catch (UnsupportedAudioStreamException e2) {
@@ -97,7 +97,7 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
     private void playMedia(String url) {
         logger.debug("Calling stop");
         stop();
-        //removeAllTracksFromQueue();
+        // removeAllTracksFromQueue();
 
         if (!url.startsWith("x-") && (!url.startsWith("http"))) {
             url = "x-file-cifs:" + url;
@@ -194,12 +194,13 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
             // stream.
             logger.debug("Stop currently playing stream.");
             stop();
-/*         if (audioStream instanceof URLAudioStream) {
-            logger.debug("AudioStream it is an external URL, the speaker can access it itself and play it.");
-            // it is an external URL, the speaker can access it itself and play it.
-            URLAudioStream urlAudioStream = (URLAudioStream) audioStream;
-            url = urlAudioStream.getURL();
- */
+            /*
+             * if (audioStream instanceof URLAudioStream) {
+             * logger.debug("AudioStream it is an external URL, the speaker can access it itself and play it.");
+             * // it is an external URL, the speaker can access it itself and play it.
+             * URLAudioStream urlAudioStream = (URLAudioStream) audioStream;
+             * url = urlAudioStream.getURL();
+             */
         } else {
             if (callbackUrl != null) {
                 String relativeUrl;
@@ -218,7 +219,7 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
         playMedia(url);
     }
 
-     @Override
+    @Override
     public String getUDN() {
         return (String) this.getConfig().get(YamahaMusicCastBindingConstants.Configs.CONFIG_UDN);
     }
@@ -230,7 +231,6 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
 
     @Override
     public void onServiceSubscribed(String service, boolean succeeded) {
-
     }
 
     @Override

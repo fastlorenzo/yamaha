@@ -9,7 +9,7 @@
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
 /**
- * Returns CD related information 
+ * Returns CD related information
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
@@ -20,21 +20,21 @@ public class CdEvent {
     protected Boolean playInfoUpdated;
 
     /*
-     * Returns CD device status Values: "open" / "close" / "ready" / "not_ready" 
+     * Returns CD device status Values: "open" / "close" / "ready" / "not_ready"
      */
     public String getDeviceStatus() {
         return deviceStatus;
     }
 
     /*
-     * Returns current playback time (unit in second).  Value Range: -59999 ~ 59999 
+     * Returns current playback time (unit in second). Value Range: -59999 ~ 59999
      */
     public Integer getPlayTime() {
         return playTime;
     }
 
     /*
-     * Returns whether or not playback info has changed. If so, pull renewed info using /cd/getPlayInfo 
+     * Returns whether or not playback info has changed. If so, pull renewed info using /cd/getPlayInfo
      */
     public Boolean getPlayInfoUpdated() {
         return playInfoUpdated;

@@ -11,16 +11,16 @@ package org.openhab.binding.yamahamusiccast.internal.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.core.library.types.NextPreviousType;
-import org.eclipse.smarthome.core.library.types.PlayPauseType;
-import org.eclipse.smarthome.core.library.types.StopMoveType;
-import org.eclipse.smarthome.core.library.types.RewindFastforwardType;
-import org.eclipse.smarthome.core.types.Command;
-import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
-import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
-import org.openhab.binding.yamahamusiccast.internal.api.model.PlayInfo;
-import com.google.gson.Gson;
 import org.eclipse.jetty.client.HttpClient;
+import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
+import org.openhab.binding.yamahamusiccast.internal.api.model.PlayInfo;
+import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
+import org.openhab.core.library.types.NextPreviousType;
+import org.openhab.core.library.types.PlayPauseType;
+import org.openhab.core.library.types.StopMoveType;
+import org.openhab.core.types.Command;
+
+import com.google.gson.Gson;
 
 /**
  * The {@link MusicCastRequest} encapsulates a request sent by the {@link YamahaMusicCast}.
@@ -33,7 +33,7 @@ import org.eclipse.jetty.client.HttpClient;
 public class MusicCastNetUSBRequest<T> extends MusicCastRequest<T> {
 
     /**
-     * 
+     *
      * @param host IP address of the target device
      */
     public MusicCastNetUSBRequest(Gson gson, HttpClient httpClient, String host) {
@@ -46,7 +46,7 @@ public class MusicCastNetUSBRequest<T> extends MusicCastRequest<T> {
      * @return PlayInfo
      * @throws MusicCastException
      */
-    public PlayInfo getPlayInfo() throws MusicCastException {
+    public @Nullable PlayInfo getPlayInfo() throws MusicCastException {
         setResultType((Class<T>) PlayInfo.class);
         PlayInfo playInfo;
         setPath(PlayInfo.url);
@@ -54,16 +54,16 @@ public class MusicCastNetUSBRequest<T> extends MusicCastRequest<T> {
         return playInfo;
     }
 
-   /**
+    /**
      * For controlling playback status
      *
      * @param playback Playback status ("play" / "stop" / "pause" / "play_pause"
-     * / "previous" / "next" / "fast_reverse_start" / "fast_reverse_end" /
-     * "fast_forward_start" / "fast_forward_end")
+     *            / "previous" / "next" / "fast_reverse_start" / "fast_reverse_end" /
+     *            "fast_forward_start" / "fast_forward_end")
      * @return Response code
      * @throws MusicCastException
      */
-    public Response setPlayback(Command command) throws MusicCastException {
+    public @Nullable Response setPlayback(Command command) throws MusicCastException {
         setResultType((Class<T>) Response.class);
         String playback = "";
         Response response;
@@ -73,22 +73,23 @@ public class MusicCastNetUSBRequest<T> extends MusicCastRequest<T> {
         if (command == PlayPauseType.PLAY) {
             playback = YamahaMusicCastBindingConstants.PLAYBACK_PLAY;
         } else if (command == PlayPauseType.PAUSE) {
-                playback = YamahaMusicCastBindingConstants.PLAYBACK_PAUSE;
+            playback = YamahaMusicCastBindingConstants.PLAYBACK_PAUSE;
         } else if (command == StopMoveType.STOP) {
-                playback = YamahaMusicCastBindingConstants.PLAYBACK_STOP;
+            playback = YamahaMusicCastBindingConstants.PLAYBACK_STOP;
         } else if (command == NextPreviousType.NEXT) {
-                playback = YamahaMusicCastBindingConstants.PLAYBACK_NEXT;
+            playback = YamahaMusicCastBindingConstants.PLAYBACK_NEXT;
         } else if (command == NextPreviousType.PREVIOUS) {
-                playback = YamahaMusicCastBindingConstants.PLAYBACK_PREVIOUS;
+            playback = YamahaMusicCastBindingConstants.PLAYBACK_PREVIOUS;
         }
 
-/*             case RewindFastforwardType.FASTFORWARD:
-                playback = ;
-                break;
-            case RewindFastforwardType.REWIND:
-                playback = ;
-                break;
- */
+        /*
+         * case RewindFastforwardType.FASTFORWARD:
+         * playback = ;
+         * break;
+         * case RewindFastforwardType.REWIND:
+         * playback = ;
+         * break;
+         */
 
         setQueryParameter(YamahaMusicCastBindingConstants.PLAYBACK_PARAMETER, playback);
         response = execute();

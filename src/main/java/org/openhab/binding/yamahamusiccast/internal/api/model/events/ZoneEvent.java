@@ -9,7 +9,7 @@
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
 /**
- * Returns information related to Zone 
+ * Returns information related to Zone
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
@@ -23,14 +23,14 @@ public class ZoneEvent {
     protected Boolean signalInfoUpdated;
 
     /*
-     * Returns power status Values: "on" / "standby" 
+     * Returns power status Values: "on" / "standby"
      */
     public String getPower() {
         return power;
     }
 
     /*
-     * Returns current Input ID Values: Input IDs gotten via /system/getFeature 
+     * Returns current Input ID Values: Input IDs gotten via /system/getFeature
      */
     public String getInput() {
         return input;
@@ -38,14 +38,14 @@ public class ZoneEvent {
 
     /*
      * Returns volume value Values: Value range calculated by minimum/maximum/step
-     * values gotten via /system/getFeatures 
+     * values gotten via /system/getFeatures
      */
     public Integer getVolume() {
         return volume;
     }
 
     /*
-     * Returns mute status 
+     * Returns mute status
      */
     public Boolean getMute() {
         return mute;
@@ -53,7 +53,7 @@ public class ZoneEvent {
 
     /*
      * Returns whether or not other info has changed than main zone power/input/volume/mute status.
-     * If so, pull renewed info using /main/getStatus 
+     * If so, pull renewed info using /main/getStatus
      */
     public Boolean getStatusUpdated() {
         return statusUpdated;

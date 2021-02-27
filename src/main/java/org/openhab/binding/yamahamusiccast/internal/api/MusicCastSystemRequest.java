@@ -11,10 +11,10 @@ package org.openhab.binding.yamahamusiccast.internal.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
-import org.openhab.binding.yamahamusiccast.internal.api.model.DeviceInfo;
-import com.google.gson.Gson;
 import org.eclipse.jetty.client.HttpClient;
+import org.openhab.binding.yamahamusiccast.internal.api.model.DeviceInfo;
+
+import com.google.gson.Gson;
 
 /**
  * The {@link MusicCastRequest} encapsulates a request sent by the {@link YamahaMusicCast}.
@@ -27,7 +27,7 @@ import org.eclipse.jetty.client.HttpClient;
 public class MusicCastSystemRequest<T> extends MusicCastRequest<T> {
 
     /**
-     * 
+     *
      * @param host IP address of the target device
      */
     public MusicCastSystemRequest(Gson gson, HttpClient httpClient, String host) {
@@ -40,7 +40,7 @@ public class MusicCastSystemRequest<T> extends MusicCastRequest<T> {
      * @return DeviceInfo
      * @throws MusicCastException
      */
-    public DeviceInfo getDeviceInfo() throws MusicCastException {
+    public @Nullable DeviceInfo getDeviceInfo() throws MusicCastException {
         setResultType((Class<T>) DeviceInfo.class);
         DeviceInfo info;
         setPath(DeviceInfo.url);

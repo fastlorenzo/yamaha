@@ -9,7 +9,7 @@
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
 /**
- * Returns Clock related information 
+ * Returns Clock related information
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
@@ -18,7 +18,7 @@ public class ClockEvent {
     protected Boolean settingsUpdated;
 
     /*
-     * Returns whether or not clock info has changed. If so, pull renewed info using /clock/getSettings 
+     * Returns whether or not clock info has changed. If so, pull renewed info using /clock/getSettings
      */
     public Boolean getSettingsUpdated() {
         return settingsUpdated;

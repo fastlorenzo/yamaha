@@ -31,5 +31,4 @@ public class YamahaMusicCastThingConfig {
     public int getRefreshInterval() {
         return refresh;
     }
-
 }

@@ -21,5 +21,4 @@ public class Response {
     public Integer getResponseCode() {
         return responseCode;
     }
-
 }

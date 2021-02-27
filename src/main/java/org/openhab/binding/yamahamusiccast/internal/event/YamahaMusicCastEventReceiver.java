@@ -14,10 +14,6 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-//import org.openhab.binding.silvercrestwifisocket.internal.exceptions.NotOneResponsePacketException;
-//import org.openhab.binding.silvercrestwifisocket.internal.exceptions.PacketIntegrityErrorException;
-import org.openhab.binding.yamahamusiccast.internal.event.YamahaMusicCastEventMediator;
-//import org.openhab.binding.silvercrestwifisocket.internal.utils.WifiSocketPacketConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +33,7 @@ public class YamahaMusicCastEventReceiver implements Runnable {
 
     private DatagramSocket datagramSocket;
     private final YamahaMusicCastEventMediator mediator;
-//    private final WifiSocketPacketConverter packetConverter = new WifiSocketPacketConverter();
+    // private final WifiSocketPacketConverter packetConverter = new WifiSocketPacketConverter();
 
     private boolean shutdown;
     private int listeningPort;
@@ -49,8 +45,8 @@ public class YamahaMusicCastEventReceiver implements Runnable {
      * @param listeningPort the listening UDP port
      * @throws SocketException is some problem occurs opening the socket.
      */
-    public YamahaMusicCastEventReceiver(final YamahaMusicCastEventMediator mediator,
-            final int listeningPort) throws SocketException {
+    public YamahaMusicCastEventReceiver(final YamahaMusicCastEventMediator mediator, final int listeningPort)
+            throws SocketException {
         logger.debug("Starting Update Receiver Runnable...");
         // Create a socket to listen on the port.
         this.listeningPort = listeningPort;
@@ -83,11 +79,10 @@ public class YamahaMusicCastEventReceiver implements Runnable {
                 logger.debug("Received packet from: {}. Will process the packet...",
                         packet.getAddress().getHostAddress());
 
-                //datagramPacketToString(packet);
+                // datagramPacketToString(packet);
                 String message = new String(packet.getData(), 0, packet.getLength());
-                logger.debug("Processed packet: {}",
-                        message);
-//                        datagramPacketToString(buffer));
+                logger.debug("Processed packet: {}", message);
+                // datagramPacketToString(buffer));
                 // Do mediator something with it
                 this.mediator.processReceivedPacket(packet);
 
@@ -96,12 +91,14 @@ public class YamahaMusicCastEventReceiver implements Runnable {
                 logger.trace("Socket Timeout receiving packet.");
             } catch (IOException e) {
                 logger.debug("One exception has occurred: {} ", e.getMessage());
-/*             } catch (PacketIntegrityErrorException e) {
-                logger.debug("Packet has one integrity error: {}", e.getMessage());
-            } catch (NotOneResponsePacketException e) {
-                logger.debug(
-                        "The message received is not one response. Probably the message received is one broadcast message looking for the socket.");
- */            }
+                /*
+                 * } catch (PacketIntegrityErrorException e) {
+                 * logger.debug("Packet has one integrity error: {}", e.getMessage());
+                 * } catch (NotOneResponsePacketException e) {
+                 * logger.debug(
+                 * "The message received is not one response. Probably the message received is one broadcast message looking for the socket."
+                 * );
+                 */ }
         }
 
         // close the socket
@@ -126,14 +123,13 @@ public class YamahaMusicCastEventReceiver implements Runnable {
         }
     }
 
-    public static StringBuilder datagramPacketToString(byte[] packet)
-    {
-        if (packet == null)
+    public static StringBuilder datagramPacketToString(byte[] packet) {
+        if (packet == null) {
             return null;
+        }
         StringBuilder ret = new StringBuilder();
         int i = 0;
-        while (packet[i] != 0)
-        {
+        while (packet[i] != 0) {
             ret.append((char) packet[i]);
             i++;
         }
@@ -146,5 +142,4 @@ public class YamahaMusicCastEventReceiver implements Runnable {
     public void shutdown() {
         this.shutdown = true;
     }
-
 }

@@ -9,7 +9,7 @@
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
 /**
- * Returns Tuner related information 
+ * Returns Tuner related information
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
@@ -20,7 +20,7 @@ public class TunerEvent {
 
     /*
      * Returns whether or not playback info has changed. If so, pull renewed info
-     * using /tuner/getPlayInfo 
+     * using /tuner/getPlayInfo
      */
     public Boolean getPlayInfoUpdated() {
         return playInfoUpdated;
@@ -28,7 +28,7 @@ public class TunerEvent {
 
     /*
      * Returns whether or not preset info has changed. If so, pull renewed info
-     * using /tuner/getPresetInfo 
+     * using /tuner/getPresetInfo
      */
     public Boolean getPresetInfoUpdated() {
         return presetInfoUpdated;

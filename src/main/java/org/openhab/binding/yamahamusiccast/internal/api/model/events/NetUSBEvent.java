@@ -23,10 +23,10 @@ public class NetUSBEvent {
     protected Boolean presetInfoUpdated;
     protected Boolean recentInfoUpdated;
     protected PresetControl presetControl;
-/*
-    protected TrialStatus trialStatus;
-    protected TrialTimeLeft trialTimeLeft;
-*/
+    /*
+     * protected TrialStatus trialStatus;
+     * protected TrialTimeLeft trialTimeLeft;
+     */
     protected Boolean playInfoUpdated;
     protected Boolean listInfoUpdated;
 
@@ -58,15 +58,15 @@ public class NetUSBEvent {
      * Returns bit field flags of multiple playback errors. Flags are expressed as
      * OR of bit field. play_error code x is stored as a flag in b[x] shown below.
      * x=0 is reserved for it is for No Error, and x=100 is ignored here b[0]
-     * reserved (for it’s No Error) b[1]   Access Error (common for all Net/USB sources)
-     * ... b[11]  Intent Restricted by Streaming Credentials (Qobuz) 
+     * reserved (for it’s No Error) b[1] Access Error (common for all Net/USB sources)
+     * ... b[11] Intent Restricted by Streaming Credentials (Qobuz)
      */
     public Integer getMultiplePlayErrors() {
         return multiplePlayErrors;
     }
 
     /*
-     * Returns playback related message. Max size is 256 bytes 
+     * Returns playback related message. Max size is 256 bytes
      */
     public String getPlayMessage() {
         return playMessage;
@@ -74,14 +74,14 @@ public class NetUSBEvent {
 
     /*
      * Returns whether or not account info has changed. If so, pull renewed info
-     * using /netusb/getAccountStatus 
+     * using /netusb/getAccountStatus
      */
     public Boolean getAccountUpdated() {
         return accountUpdated;
     }
 
     /*
-     * Returns current playback time (unit in second) Value: rages -59999 - 59999 
+     * Returns current playback time (unit in second) Value: rages -59999 - 59999
      */
     public Integer getPlayTime() {
         return playTime;
@@ -89,7 +89,7 @@ public class NetUSBEvent {
 
     /*
      * Returns whether or not preset info has changed. If so, pull renewed info
-     * using netusb/getPresetInfo 
+     * using netusb/getPresetInfo
      */
     public Boolean getPresetInfoUpdated() {
         return presetInfoUpdated;
@@ -97,14 +97,14 @@ public class NetUSBEvent {
 
     /*
      * Returns whether or not playback history info has changed. If so, pull
-     * renewed info using /netusb/getRecentInfo  
+     * renewed info using /netusb/getRecentInfo
      */
     public Boolean getRecentInfoUpdated() {
         return recentInfoUpdated;
     }
 
     /*
-     * Returns results of Preset operations   
+     * Returns results of Preset operations
      */
     public class PresetControl {
         protected String type;
@@ -112,79 +112,85 @@ public class NetUSBEvent {
         protected String result;
 
         /*
-        * Returns a type of Preset operations Values: "store" / "clear" / "recall"   
-        */
+         * Returns a type of Preset operations Values: "store" / "clear" / "recall"
+         */
         public String getType() {
             return type;
         }
 
         /*
-        * Returns a Preset number being operated Value: one in the range gotten
-        * via /system/getFeatures   
-        */
+         * Returns a Preset number being operated Value: one in the range gotten
+         * via /system/getFeatures
+         */
         public Integer getNum() {
             return num;
         }
 
         /*
-        * Returns the result of operation
-        * Values:
-        * "success" (for all types) /
-        * "error" (for all types) /
-        * "empty" (only for recall) /
-        * "not_found" (only for recall) 
-        */
+         * Returns the result of operation
+         * Values:
+         * "success" (for all types) /
+         * "error" (for all types) /
+         * "empty" (only for recall) /
+         * "not_found" (only for recall)
+         */
         public String getResult() {
             return result;
         }
     }
 
     /*
-     * Returns trial status of a Device   
+     * Returns trial status of a Device
      */
-/*    public Object getTrialStatus() {
-        return trialStatus;
-    }
-
     /*
-     * Returns Input IDs related to Net/USB   
+     * public Object getTrialStatus() {
+     * return trialStatus;
+     * }
+     * 
+     * /*
+     * Returns Input IDs related to Net/USB
      */
-/*    public String getInput() {
-        return input;
-    }
-
     /*
+     * public String getInput() {
+     * return input;
+     * }
+     * 
+     * /*
      * Returns whether or not trial can be initiated. If false, new trial cannot
-     * get started due to a Device in trial status 
+     * get started due to a Device in trial status
      */
-/*    public Boolean getEnable() {
-        return enable;
-    }
-
     /*
-     * Returns remaining time of a trial   
+     * public Boolean getEnable() {
+     * return enable;
+     * }
+     * 
+     * /*
+     * Returns remaining time of a trial
      */
-/*    public Object getTrialTimeLeft() {
-        return trialTimeLeft;
-    }
-
     /*
-     * Returns Net/USB related Input IDs   
+     * public Object getTrialTimeLeft() {
+     * return trialTimeLeft;
+     * }
+     * 
+     * /*
+     * Returns Net/USB related Input IDs
      */
-/*    public String getTrialTimeLeftInput() {
-        return input;
-    }
-
     /*
+     * public String getTrialTimeLeftInput() {
+     * return input;
+     * }
+     * 
+     * /*
      * Returns remaining days of trial.
      * 0 means it expires within 24 hours.
      * -1 means it has expired,
-     * -2 means no info is retrieved yet from the server 
+     * -2 means no info is retrieved yet from the server
      */
-/*    public Integer getTime() {
-        return time;
-    }
-*/
+    /*
+     * public Integer getTime() {
+     * return time;
+     * }
+     */
     /*
      * Returns whether or not playback info has changed. If so, pull renewed info
      * using /netusb/getPlayInfo
@@ -195,7 +201,7 @@ public class NetUSBEvent {
 
     /*
      * Returns whether or not list info has changed. If so, pull renewed info
-     * using /netusb/getListInfo 
+     * using /netusb/getListInfo
      */
     public Boolean getListInfoUpdated() {
         return listInfoUpdated;

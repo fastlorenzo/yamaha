@@ -11,14 +11,15 @@ package org.openhab.binding.yamahamusiccast.internal.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.library.types.IncreaseDecreaseType;
+import org.eclipse.jetty.client.HttpClient;
 import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
 import org.openhab.binding.yamahamusiccast.internal.api.model.Status;
+import org.openhab.core.library.types.IncreaseDecreaseType;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.types.Command;
+
 import com.google.gson.Gson;
-import org.eclipse.jetty.client.HttpClient;
 
 /**
  * The {@link MusicCastRequest} encapsulates a request sent by the {@link YamahaMusicCast}.
@@ -31,7 +32,7 @@ import org.eclipse.jetty.client.HttpClient;
 public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
 
     /**
-     * 
+     *
      * @param host IP address of the target device
      */
     public MusicCastZoneRequest(Gson gson, HttpClient httpClient, String host) {
@@ -44,7 +45,7 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
      * @return Status
      * @throws MusicCastException
      */
-    public Status getStatus(String zone) throws MusicCastException {
+    public @Nullable Status getStatus(String zone) throws MusicCastException {
         setResultType((Class<T>) Status.class);
         String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone + Status.path;
         Status status;
@@ -53,9 +54,10 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
         return status;
     }
 
-    public Response setPower(String zone, Command command) throws MusicCastException {
+    public @Nullable Response setPower(String zone, Command command) throws MusicCastException {
         setResultType((Class<T>) Response.class);
-        String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone + YamahaMusicCastBindingConstants.ZONE_SET_POWER_METHOD;
+        String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone
+                + YamahaMusicCastBindingConstants.ZONE_SET_POWER_METHOD;
         String power = "";
         Response response;
         setPath(url);
@@ -71,10 +73,11 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
         response = execute();
         return response;
     }
-    
-    public Response setVolume(String zone, Command command, Integer maxVolume) throws MusicCastException {
+
+    public @Nullable Response setVolume(String zone, Command command, Integer maxVolume) throws MusicCastException {
         setResultType((Class<T>) Response.class);
-        String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone + YamahaMusicCastBindingConstants.ZONE_SET_VOLUME_METHOD;
+        String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone
+                + YamahaMusicCastBindingConstants.ZONE_SET_VOLUME_METHOD;
         Integer adjustedVolume;
         String volume;
         if (command == IncreaseDecreaseType.INCREASE) {
@@ -92,10 +95,11 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
         response = execute();
         return response;
     }
-    
-    public Response setMute(String zone, Command command) throws MusicCastException {
+
+    public @Nullable Response setMute(String zone, Command command) throws MusicCastException {
         setResultType((Class<T>) Response.class);
-        String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone + YamahaMusicCastBindingConstants.ZONE_SET_MUTE_METHOD;
+        String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone
+                + YamahaMusicCastBindingConstants.ZONE_SET_MUTE_METHOD;
         boolean mute = false;
         Response response;
         setPath(url);
@@ -111,10 +115,11 @@ public class MusicCastZoneRequest<T> extends MusicCastRequest<T> {
         response = execute();
         return response;
     }
-    
-    public Response setInput(String zone, Command command) throws MusicCastException {
+
+    public @Nullable Response setInput(String zone, Command command) throws MusicCastException {
         setResultType((Class<T>) Response.class);
-        String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone + YamahaMusicCastBindingConstants.ZONE_SET_INPUT_METHOD;
+        String url = YamahaMusicCastBindingConstants.ROOT_PATH + "/" + zone
+                + YamahaMusicCastBindingConstants.ZONE_SET_INPUT_METHOD;
         String input = command.toString();
         Response response;
         setPath(url);

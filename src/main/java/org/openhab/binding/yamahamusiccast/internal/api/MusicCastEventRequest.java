@@ -9,13 +9,14 @@
 
 package org.openhab.binding.yamahamusiccast.internal.api;
 
+import static org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants.EVENTS_DEFAULT_PORT;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.binding.yamahamusiccast.internal.api.model.Response;
-import org.openhab.binding.yamahamusiccast.internal.api.model.SubscribeEvent;
-import static org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants.EVENTS_DEFAULT_PORT;
-import com.google.gson.Gson;
 import org.eclipse.jetty.client.HttpClient;
+import org.openhab.binding.yamahamusiccast.internal.api.model.SubscribeEvent;
+
+import com.google.gson.Gson;
 
 /**
  * The {@link MusicCastRequest} encapsulates a request sent by the {@link YamahaMusicCast}.
@@ -28,7 +29,7 @@ import org.eclipse.jetty.client.HttpClient;
 public class MusicCastEventRequest<T> extends MusicCastRequest<T> {
 
     /**
-     * 
+     *
      * @param host IP address of the target device
      */
     public MusicCastEventRequest(Gson gson, HttpClient httpClient, String host) {
@@ -41,7 +42,7 @@ public class MusicCastEventRequest<T> extends MusicCastRequest<T> {
      * @return SubscribeEvent
      * @throws MusicCastException
      */
-    public SubscribeEvent subscribeToEvents() throws MusicCastException {
+    public @Nullable SubscribeEvent subscribeToEvents() throws MusicCastException {
         setResultType((Class<T>) SubscribeEvent.class);
         SubscribeEvent subscribeEvent;
         setPath(SubscribeEvent.url);

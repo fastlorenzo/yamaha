@@ -8,14 +8,10 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.event;
 
-import java.util.Set;
 import java.net.DatagramPacket;
 
-import org.eclipse.smarthome.core.thing.Thing;
-//import org.openhab.binding.silvercrestwifisocket.internal.discovery.SilvercrestWifiSocketDiscoveryService;
-//import org.openhab.binding.silvercrestwifisocket.internal.entities.SilvercrestWifiSocketResponse;
-import org.openhab.binding.yamahamusiccast.internal.event.YamahaMusicCastEventReceiver;
 import org.openhab.binding.yamahamusiccast.handler.YamahaMusicCastHandler;
+import org.openhab.core.thing.Thing;
 
 /**
  * The {@link YamahaMusicCastEventMediator} is responsible for receiving all the UDP packets and route correctly to
@@ -54,12 +50,12 @@ public interface YamahaMusicCastEventMediator {
      *
      * @returns all the {@link Thing}.
      */
-//    Set<Thing> getAllThingsRegistred();
+    // Set<Thing> getAllThingsRegistred();
 
     /**
      * Sets the discovery service to inform the when one new thing has been found.
      *
      * @param discoveryService the discovery service.
      */
-//    void setDiscoveryService(SilvercrestWifiSocketDiscoveryService discoveryService);
+    // void setDiscoveryService(SilvercrestWifiSocketDiscoveryService discoveryService);
 }

@@ -34,7 +34,7 @@ public class Status extends Response {
     public String zone = "main";
     public final static String path = "/getStatus";
     public String url;
-    
+
     public String getPower() {
         return power;
     }

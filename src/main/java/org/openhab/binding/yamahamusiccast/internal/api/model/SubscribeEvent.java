@@ -19,5 +19,4 @@ public class SubscribeEvent extends Response {
     public static final String url = "/YamahaExtendedControl/v2";
 
     public static final String appName = "MusicCast/2";
-
 }

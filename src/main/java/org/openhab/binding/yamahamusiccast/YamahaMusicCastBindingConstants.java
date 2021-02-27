@@ -11,7 +11,7 @@ package org.openhab.binding.yamahamusiccast;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingTypeUID;
 
 /**
  * The {@link YamahaMusicCastBinding} class defines common constants, which are
@@ -41,7 +41,7 @@ public class YamahaMusicCastBindingConstants {
     public static final String CHANNEL_TRACK = "track";
     public static final String CHANNEL_ALBUMART_URL = "albumArtUrl";
     public static final String CHANNEL_PLAY_URI = "playuri";
-    
+
     // The supported thing types
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SPEAKER);
 
@@ -52,7 +52,7 @@ public class YamahaMusicCastBindingConstants {
         public static final String CONFIG_UDN = "udn";
     }
 
-    // Default UDP listening events  port
+    // Default UDP listening events port
     public static final int EVENTS_DEFAULT_PORT = 41100;
 
     // List of properties
@@ -71,7 +71,7 @@ public class YamahaMusicCastBindingConstants {
     public static final String ZONE_POWER_ON = "on";
     public static final String ZONE_POWER_STANDBY = "standby";
     public static final String ZONE_POWER_TOGGLE = "toggle";
-    
+
     public static final String SET_SLEEP_PARAMETER = "sleep";
     public static final String ZONE_SET_SLEEP_METHOD = "/setSleep";
     public static final int ZONE_SLEEP_0 = 0;
@@ -79,12 +79,12 @@ public class YamahaMusicCastBindingConstants {
     public static final int ZONE_SLEEP_60 = 60;
     public static final int ZONE_SLEEP_90 = 90;
     public static final int ZONE_SLEEP_120 = 120;
-    
+
     public static final String SET_VOLUME_PARAMETER = "volume";
     public static final String ZONE_SET_VOLUME_METHOD = "/setVolume";
     public static final String SET_MUTE_PARAMETER = "enable";
     public static final String ZONE_SET_MUTE_METHOD = "/setMute";
-    
+
     public static final String SET_INPUT_PARAMETER = "input";
     public static final String ZONE_SET_INPUT_METHOD = "/setInput";
     public static final String SET_SOUND_PROGRAM_PARAMETER = "program";
@@ -184,5 +184,4 @@ public class YamahaMusicCastBindingConstants {
         main_sync,
         none
     }
-
 }

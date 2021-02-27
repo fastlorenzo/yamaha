@@ -8,21 +8,18 @@
  */
 package org.openhab.binding.yamahamusiccast.internal.event;
 
+//import java.util.Set;
+import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
-//import java.util.Set;
-import java.net.DatagramPacket;
 
-import org.eclipse.smarthome.core.thing.Thing;
 import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
-//import org.openhab.binding.silvercrestwifisocket.internal.discovery.SilvercrestWifiSocketDiscoveryService;
-//import org.openhab.binding.silvercrestwifisocket.internal.entities.SilvercrestWifiSocketResponse;
-import org.openhab.binding.yamahamusiccast.internal.event.YamahaMusicCastEventReceiver;
 import org.openhab.binding.yamahamusiccast.handler.YamahaMusicCastHandler;
+import org.openhab.core.thing.Thing;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +41,7 @@ public class YamahaMusicCastEventMediatorImpl implements YamahaMusicCastEventMed
     private YamahaMusicCastEventReceiver receiver;
     private Thread receiverThread;
 
-//    private SilvercrestWifiSocketDiscoveryService silvercrestDiscoveryService;
+    // private SilvercrestWifiSocketDiscoveryService silvercrestDiscoveryService;
 
     /**
      * Called at the service activation.
@@ -75,8 +72,8 @@ public class YamahaMusicCastEventMediatorImpl implements YamahaMusicCastEventMed
      */
     @Override
     public void processReceivedPacket(final DatagramPacket packet) {
-        logger.debug("Received packet from: {} ", packet.getAddress().getHostAddress());//,
-//                receivedMessage.getType());
+        logger.debug("Received packet from: {} ", packet.getAddress().getHostAddress());// ,
+        // receivedMessage.getType());
 
         String message = new String(packet.getData(), 0, packet.getLength());
         YamahaMusicCastHandler handler = this.getHandlerRegistredByHost(packet.getAddress().getHostAddress());
@@ -86,12 +83,14 @@ public class YamahaMusicCastEventMediatorImpl implements YamahaMusicCastEventMed
             handler.newReceivedResponseMessage(message);
             logger.debug("Received message delivered with success to handler of host {}",
                     packet.getAddress().getHostAddress());
-        } /* else {
-            logger.debug("There is no handler registered for mac address:{}", receivedMessage.getMacAddress());
-            // notify discovery service of thing found!
-            this.silvercrestDiscoveryService.discoveredWifiSocket(receivedMessage.getMacAddress(),
-                    receivedMessage.getHostAddress());
-        } */
+        } /*
+           * else {
+           * logger.debug("There is no handler registered for mac address:{}", receivedMessage.getMacAddress());
+           * // notify discovery service of thing found!
+           * this.silvercrestDiscoveryService.discoveredWifiSocket(receivedMessage.getMacAddress(),
+           * receivedMessage.getHostAddress());
+           * }
+           */
     }
 
     /**
@@ -163,14 +162,15 @@ public class YamahaMusicCastEventMediatorImpl implements YamahaMusicCastEventMed
      *
      * @returns all the {@link Thing}.
      */
-/*    @Override
-    public Set<Thing> getAllThingsRegistred() {
-        return this.handlersRegistredByThing.keySet();
-    }
-
-    @Override
-    public void setDiscoveryService(final SilvercrestWifiSocketDiscoveryService discoveryService) {
-        this.silvercrestDiscoveryService = discoveryService;
-    }
-*/
+    /*
+     * @Override
+     * public Set<Thing> getAllThingsRegistred() {
+     * return this.handlersRegistredByThing.keySet();
+     * }
+     * 
+     * @Override
+     * public void setDiscoveryService(final SilvercrestWifiSocketDiscoveryService discoveryService) {
+     * this.silvercrestDiscoveryService = discoveryService;
+     * }
+     */
 }

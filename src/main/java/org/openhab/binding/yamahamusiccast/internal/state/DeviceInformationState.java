@@ -41,5 +41,4 @@ public class DeviceInformationState implements Invalidateable {
         version = "0.0";
         zones.clear();
     }
-
 }

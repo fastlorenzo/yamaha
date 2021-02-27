@@ -9,42 +9,42 @@
 package org.openhab.binding.yamahamusiccast.internal;
 
 import java.util.Collections;
-import java.util.Set;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eclipse.smarthome.core.audio.AudioHTTPServer;
-import org.eclipse.smarthome.core.audio.AudioSink;
-import org.eclipse.smarthome.core.net.HttpServiceUtil;
-import org.eclipse.smarthome.core.net.NetworkAddressService;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
-import org.eclipse.smarthome.io.transport.upnp.UpnpIOService;
+import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
+import org.openhab.binding.yamahamusiccast.handler.YamahaMusicCastHandler;
+import org.openhab.binding.yamahamusiccast.internal.event.YamahaMusicCastEventMediator;
+import org.openhab.core.audio.AudioHTTPServer;
+import org.openhab.core.audio.AudioSink;
+import org.openhab.core.io.transport.upnp.UpnpIOService;
+import org.openhab.core.net.HttpServiceUtil;
+import org.openhab.core.net.NetworkAddressService;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.binding.BaseThingHandlerFactory;
+import org.openhab.core.thing.binding.ThingHandler;
+import org.openhab.core.thing.binding.ThingHandlerFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
-import org.openhab.binding.yamahamusiccast.handler.YamahaMusicCastHandler;
-import org.openhab.binding.yamahamusiccast.internal.event.YamahaMusicCastEventMediator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link YamahaMusicCastHandlerFactory} is responsible for creating things and thing 
+ * The {@link YamahaMusicCastHandlerFactory} is responsible for creating things and thing
  * handlers.
- * 
+ *
  * @author Frank Zimmer - Initial contribution
  * @author Hector Rodriguez Medina - Add event mediator
  */
 @Component(service = ThingHandlerFactory.class, configurationPid = "binding.yamahamusiccast")
 public class YamahaMusicCastHandlerFactory extends BaseThingHandlerFactory {
-    
+
     private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections
             .singleton(YamahaMusicCastBindingConstants.THING_TYPE_SPEAKER);
     private final Logger logger = LoggerFactory.getLogger(YamahaMusicCastHandlerFactory.class);
@@ -180,4 +180,3 @@ public class YamahaMusicCastHandlerFactory extends BaseThingHandlerFactory {
         this.networkAddressService = null;
     }
 }
-

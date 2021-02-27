@@ -58,5 +58,4 @@ public class DeviceInfo extends Response {
     public String getNetmoduleVersion() {
         return netmoduleVersion;
     }
-
 }

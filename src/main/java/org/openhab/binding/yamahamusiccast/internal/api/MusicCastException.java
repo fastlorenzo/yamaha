@@ -28,5 +28,4 @@ public class MusicCastException extends Exception {
     public MusicCastException(Throwable cause) {
         super(cause);
     }
-
 }

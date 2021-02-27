@@ -44,28 +44,28 @@ public class PlayInfo extends Response {
     }
 
     /*
-     * Reserved 
+     * Reserved
      */
     public String getPlayQueueType() {
         return playQueueType;
     }
 
     /*
-     * Returns playback status Values: "play" / "stop" / "pause" / "fast_reverse" / "fast_forward" 
+     * Returns playback status Values: "play" / "stop" / "pause" / "fast_reverse" / "fast_forward"
      */
     public String getPlayback() {
         return playback;
     }
 
     /*
-     * Returns repeat setting status Value: "off" / "one" / "all" 
+     * Returns repeat setting status Value: "off" / "one" / "all"
      */
     public String getRepeat() {
         return repeat;
     }
 
     /*
-     * Returns shuffle setting status Values: "off" / "on" / "songs" / "albums" 
+     * Returns shuffle setting status Values: "off" / "on" / "songs" / "albums"
      */
     public String getShuffle() {
         return shuffle;
@@ -80,8 +80,8 @@ public class PlayInfo extends Response {
     }
 
     /*
-     * Returns total playback time (unit in second). Returns 0 if total time is not 
-     * available or invalid Value Range: 0 ~ 59999 
+     * Returns total playback time (unit in second). Returns 0 if total time is not
+     * available or invalid Value Range: 0 ~ 59999
      */
     public Integer getTotalTime() {
         return totalTime;
@@ -103,8 +103,8 @@ public class PlayInfo extends Response {
      * Returns album name. Returns channel name if the input is SiriusXM.
      * Returns subtitle name if the input is radiko.
      * Returns company name if Pandora playbacks an ad.
-     * If input is MC Link, returns master’s internal content info or 
-     * Input Name if the master input is one of external sources 
+     * If input is MC Link, returns master’s internal content info or
+     * Input Name if the master input is one of external sources
      */
     public String getAlbum() {
         return album;
@@ -115,7 +115,7 @@ public class PlayInfo extends Response {
      * Returns song name if the input is Rhapsody / SiriusXM / Pandora.
      * Returns title name if the input is radiko.
      * If input is MC Link, returns master’s internal content info or
-     * empty text if the master input is one of external sources 
+     * empty text if the master input is one of external sources
      */
     public String getTrack() {
         return track;
@@ -134,7 +134,7 @@ public class PlayInfo extends Response {
 
     /*
      * Returns ID to identify album art.
-     * If ID got changed, retry to get album art data via albumart_url Value Range: 0 ～ 255 
+     * If ID got changed, retry to get album art data via albumart_url Value Range: 0 ～ 255
      */
     public Integer getAlbumartId() {
         return albumartId;
@@ -142,7 +142,7 @@ public class PlayInfo extends Response {
 
     /*
      * Returns USB device type.
-     * Returns "unknown" if no USB is connected Values: "msc" / "ipod" / "unknown" 
+     * Returns "unknown" if no USB is connected Values: "msc" / "ipod" / "unknown"
      */
     public String getUsbDevicetype() {
         return usbDevicetype;
@@ -150,7 +150,8 @@ public class PlayInfo extends Response {
 
     /*
      * Returns whether or not auto top has initiated.
-     * If it is true, display appropriate messages to the external application user interface depending on which input current one is.
+     * If it is true, display appropriate messages to the external application user interface depending on which input
+     * current one is.
      * This flag is cleared (set back to false) with these conditions as follows;
      * - Playback is initiated properly
      * - /netusb/setPlayback is executed
@@ -166,35 +167,37 @@ public class PlayInfo extends Response {
     /*
      * Returns playback attribute info.
      * Attributes are expressed as OR of bit field as shown below;
-     * b[0]   Playable
-     * b[1]   Capable of Stop
-     * b[2]   Capable of Pause
-     * b[3]   Capable of Prev Skip
-     * b[4]   Capable of Next Skip
-     * b[5]   Capable of Fast Reverse
-     * b[6]   Capable of Fast Forward
-     * b[7]   Capable of Repeat
-     * b[8]   Capable of Shuffle
-     * b[9]   Feedback Available (Pandora)
-     * b[10]  Thumbs-Up (Pandora)
-     * b[11]  Thumbs-Down (Pandora)
-     * b[12]  Video (USB)
-     * b[13]  Capable of Bookmark (Net Radio)
-     * b[14]  DMR Playback (Server)
-     * b[15]  Station Playback (Rhapsody / Napster)
-     * b[16]  AD Playback (Pandora)
-     * b[17]  Shared Station (Pandora)
-     * b[18]  Capable of Add Track (Rhapsody/Napster/Pandora/JUKE/Qobuz)
-     * b[19]  Capable of Add Album (Rhapsody / Napster / JUKE)
-     * b[20]  Shuffle Station (Pandora)
-     * b[21]  Capable of Add Channel (Pandora)
-     * b[22]  Sample Playback (JUKE)
-     * b[23]  MusicPlay Playback (Server)
-     * b[24]  Capable of Link Distribution
-     * b[25]  Capable of Add Playlist (Qobuz)
-     * b[26]  Capable of add MusicCast Playlist With Pandora,
-     * b[9] = 1 validates "thumbs_up" / "thumbs_down" / "mark_tired" of managePlay and "why_this_song" of getPlayDescription.
-     * b[21] = 1 validates "add_channel_track" / "add_channel_artist" Note: Rhapsody service name will be changed to Napster.
+     * b[0] Playable
+     * b[1] Capable of Stop
+     * b[2] Capable of Pause
+     * b[3] Capable of Prev Skip
+     * b[4] Capable of Next Skip
+     * b[5] Capable of Fast Reverse
+     * b[6] Capable of Fast Forward
+     * b[7] Capable of Repeat
+     * b[8] Capable of Shuffle
+     * b[9] Feedback Available (Pandora)
+     * b[10] Thumbs-Up (Pandora)
+     * b[11] Thumbs-Down (Pandora)
+     * b[12] Video (USB)
+     * b[13] Capable of Bookmark (Net Radio)
+     * b[14] DMR Playback (Server)
+     * b[15] Station Playback (Rhapsody / Napster)
+     * b[16] AD Playback (Pandora)
+     * b[17] Shared Station (Pandora)
+     * b[18] Capable of Add Track (Rhapsody/Napster/Pandora/JUKE/Qobuz)
+     * b[19] Capable of Add Album (Rhapsody / Napster / JUKE)
+     * b[20] Shuffle Station (Pandora)
+     * b[21] Capable of Add Channel (Pandora)
+     * b[22] Sample Playback (JUKE)
+     * b[23] MusicPlay Playback (Server)
+     * b[24] Capable of Link Distribution
+     * b[25] Capable of Add Playlist (Qobuz)
+     * b[26] Capable of add MusicCast Playlist With Pandora,
+     * b[9] = 1 validates "thumbs_up" / "thumbs_down" / "mark_tired" of managePlay and "why_this_song" of
+     * getPlayDescription.
+     * b[21] = 1 validates "add_channel_track" / "add_channel_artist" Note: Rhapsody service name will be changed to
+     * Napster.
      */
     public Integer getAttribute() {
         return attribute;

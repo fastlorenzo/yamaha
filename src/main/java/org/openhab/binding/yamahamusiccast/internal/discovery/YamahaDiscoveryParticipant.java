@@ -14,13 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.smarthome.config.discovery.DiscoveryResult;
-import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
-import org.eclipse.smarthome.config.discovery.upnp.UpnpDiscoveryParticipant;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.ThingUID;
 import org.jupnp.model.meta.RemoteDevice;
 import org.openhab.binding.yamahamusiccast.YamahaMusicCastBindingConstants;
+import org.openhab.core.config.discovery.DiscoveryResult;
+import org.openhab.core.config.discovery.DiscoveryResultBuilder;
+import org.openhab.core.config.discovery.upnp.UpnpDiscoveryParticipant;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingUID;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +65,11 @@ public class YamahaDiscoveryParticipant implements UpnpDiscoveryParticipant {
 
         URL url = device.getIdentity().getDescriptorURL();
         properties.put(YamahaMusicCastBindingConstants.Configs.CONFIG_HOST_NAME, url.getHost());
-        properties.put(YamahaMusicCastBindingConstants.Configs.CONFIG_UDN, device.getIdentity().getUdn().getIdentifierString());
+        properties.put(YamahaMusicCastBindingConstants.Configs.CONFIG_UDN,
+                device.getIdentity().getUdn().getIdentifierString());
         properties.put(YamahaMusicCastBindingConstants.DESC_FRIENDLY_NAME, device.getDetails().getFriendlyName());
-        properties.put(YamahaMusicCastBindingConstants.DESC_MODEL_NAME, device.getDetails().getModelDetails().getModelName());
+        properties.put(YamahaMusicCastBindingConstants.DESC_MODEL_NAME,
+                device.getDetails().getModelDetails().getModelName());
         properties.put(YamahaMusicCastBindingConstants.DESC_SERIAL_NUMBER, device.getDetails().getSerialNumber());
 
         // The port via UPNP is unreliable, sometimes it is 8080, on some models 49154.
@@ -76,7 +78,8 @@ public class YamahaDiscoveryParticipant implements UpnpDiscoveryParticipant {
         // Note the port is set in the thing-types.xml to 80 by default.
 
         DiscoveryResult result = DiscoveryResultBuilder.create(uid).withTTL(MIN_MAX_AGE_SECS).withProperties(properties)
-                .withLabel(label).withRepresentationProperty(YamahaMusicCastBindingConstants.Configs.CONFIG_HOST_NAME).build();
+                .withLabel(label).withRepresentationProperty(YamahaMusicCastBindingConstants.Configs.CONFIG_HOST_NAME)
+                .build();
 
         logger.debug("Discovered a Yamaha Receiver '{}' model '{}' thing with UDN '{}'",
                 device.getDetails().getFriendlyName(), device.getDetails().getModelDetails().getModelName(),

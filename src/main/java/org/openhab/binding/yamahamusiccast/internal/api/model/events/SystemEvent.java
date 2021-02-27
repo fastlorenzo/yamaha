@@ -9,7 +9,7 @@
 package org.openhab.binding.yamahamusiccast.internal.api.model.events;
 
 /**
- * Returns System related information 
+ * Returns System related information
  *
  * @author Hector Rodriguez Medina - Initial contribution
  */
@@ -40,7 +40,7 @@ public class SystemEvent {
     }
 
     /**
-     * Reserved 
+     * Reserved
      */
     public Boolean getSpeakerSettingsUpdated() {
         return speakerSettingsUpdated;
@@ -63,7 +63,7 @@ public class SystemEvent {
 
     /**
      * Returns whether or not Location info has changed. If so, pull
-     * renewed info using /system/getLocationInfo 
+     * renewed info using /system/getLocationInfo
      */
     public Boolean getLocationInfoUpdated() {
         return locationInfoUpdated;

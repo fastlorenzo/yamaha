@@ -78,7 +78,7 @@ public class MusicCastRequest<T> {
 
     private Map<String, String> requestHeaders = new HashMap<>();
 
-    private Class<T> resultType;
+    private @Nullable Class<T> resultType;
 
     // Public API
 
@@ -116,7 +116,7 @@ public class MusicCastRequest<T> {
     public void setHeaders(String key, Object value) {
         this.requestHeaders.put(key, String.valueOf(value));
     }
-    
+
     public void clearBodyParameter() {
         this.bodyParameters.clear();
     }
@@ -130,6 +130,10 @@ public class MusicCastRequest<T> {
     }
 
     public <@Nullable T extends @Nullable Response> @Nullable T execute() throws MusicCastException {
+        if (resultType == null) {
+            return null;
+        }
+
         T result = null;
         String json = getContent();
         logger.debug("JSON is " + json);
@@ -287,5 +291,4 @@ public class MusicCastRequest<T> {
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         return prettyGson.toJson(json);
     }
-
 }
