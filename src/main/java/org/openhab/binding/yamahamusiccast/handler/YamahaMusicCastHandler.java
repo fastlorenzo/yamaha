@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2020 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.yamahamusiccast.handler;
 
@@ -43,6 +47,7 @@ import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.PercentType;
 import org.openhab.core.library.types.RawType;
 import org.openhab.core.library.types.StringType;
+import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
 import org.openhab.core.thing.ThingStatus;
@@ -68,6 +73,7 @@ import com.google.gson.JsonParser;
  * @author Frank Zimmer - Initial contribution
  * @author Dries Decock - Adding extra channels and refresh from speaker
  * @author Hector Rodriguez Medina - Code refactoring
+ * @author Lorenzo Bernardi - Port to OH3
  */
 public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
 
@@ -162,7 +168,7 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
                 }
             }
         } catch (MusicCastException e) {
-            logger.debug(e.toString());
+            logger.error("Error handling command: {}", e.toString());
         }
     }
 
@@ -183,19 +189,19 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
             }
             state = zoneRequest.getStatus(slectedZone);
             if (state != null) {
-                logger.debug("Result is " + state.toString());
+                logger.debug("Result is {}", state.toString());
             }
             playInfo = netUSBRequest.getPlayInfo();
             subscribeEvent = eventRequest.subscribeToEvents();
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
             // e.printStackTrace();
-            logger.debug(e.toString(), e);
+            logger.error("Error: {}", e.toString());
         }
     }
 
     private void refresh(ChannelUID channelUID) {
-        logger.info("Refresh Channel " + channelUID.getAsString());
+        logger.info("Refresh Channel {}", channelUID.getAsString());
         // getUpdate();
         // logger.info("Refreshed everything.");
         String channelID = channelUID.getId();
@@ -226,18 +232,18 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
                         urlString += playInfo.getAlbumartUrl();
                     }
                     URL url;
-                    logger.debug("Getting image from " + urlString);
+                    logger.debug("Getting image from {}", urlString);
                     try {
                         url = new URL(urlString);
                         result = new RawType(readImage(url).toByteArray(), "image/jpeg");
-                    } catch (MalformedURLException e1) {
+                    } catch (MalformedURLException e) {
                         // TODO Auto-generated catch block
                         // e1.printStackTrace();
-                        logger.debug(e1.toString());
+                        logger.warn("Malformed URL: {}", e.toString());
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         // e.printStackTrace();
-                        logger.debug(e.toString());
+                        logger.error("Error getting album image: {}", e.toString());
                     }
                     break;
                 case CHANNEL_ARTIST:
@@ -307,20 +313,20 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
             }
             updateState(CHANNEL_ALBUMART_URL, StringType.valueOf(urlString));
             URL url;
-            logger.debug("Getting image from " + urlString);
+            logger.debug("Getting image from {}", urlString);
             try {
                 url = new URL(urlString);
                 result = new RawType(readImage(url).toByteArray(), "image/jpeg");
                 updateState(CHANNEL_ALBUM_ART, result);
                 logger.debug("Updating album art");
-            } catch (MalformedURLException e1) {
+            } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
                 // e1.printStackTrace();
-                logger.debug(e1.toString());
+                logger.warn("Malformed URL: {}", e.toString());
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 // e.printStackTrace();
-                logger.debug(e.toString());
+                logger.error("Error getting album image: {}", e.toString());
             }
             result = StringType.valueOf(playInfo.getArtist());
             updateState(CHANNEL_ARTIST, result);
@@ -401,13 +407,28 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
                 if (netUSBMessage.getPlayInfoUpdated()) {
                     try {
                         playInfo = netUSBRequest.getPlayInfo();
-                        refresh(getThing().getChannel(CHANNEL_ALBUM_ART).getUID());
-                        refresh(getThing().getChannel(CHANNEL_ARTIST).getUID());
-                        refresh(getThing().getChannel(CHANNEL_ALBUM).getUID());
-                        refresh(getThing().getChannel(CHANNEL_TRACK).getUID());
-                        refresh(getThing().getChannel(CHANNEL_PLAYBACK).getUID());
+                        Channel c = getThing().getChannel(CHANNEL_ALBUM_ART);
+                        if (c != null) {
+                            refresh(c.getUID());
+                        }
+                        c = getThing().getChannel(CHANNEL_ARTIST);
+                        if (c != null) {
+                            refresh(c.getUID());
+                        }
+                        c = getThing().getChannel(CHANNEL_ALBUM);
+                        if (c != null) {
+                            refresh(c.getUID());
+                        }
+                        c = getThing().getChannel(CHANNEL_TRACK);
+                        if (c != null) {
+                            refresh(c.getUID());
+                        }
+                        c = getThing().getChannel(CHANNEL_PLAYBACK);
+                        if (c != null) {
+                            refresh(c.getUID());
+                        }
                     } catch (MusicCastException e) {
-                        logger.debug(e.toString());
+                        logger.warn("Error getting Net/USB message: {}", e.toString());
                     }
                 }
             }
@@ -430,7 +451,7 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
         try {
             zoneRequest.setVolume(slectedZone, volume, state.getMaxVolume());
         } catch (MusicCastException e) {
-            logger.debug(e.toString());
+            logger.warn("Error setting volume: {}", e.toString());
         }
     }
 
@@ -451,7 +472,7 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
     private void scheduleRefreshJob() {
         synchronized (this) {
             if (refreshJob == null) {
-                logger.debug("Scheduling refresh job every {}s", 1);
+                logger.debug("Scheduling refresh job every {}s", config.getRefreshInterval());
                 refreshJob = scheduler.scheduleWithFixedDelay(this::run, 0, config.getRefreshInterval(),
                         TimeUnit.SECONDS);
             }

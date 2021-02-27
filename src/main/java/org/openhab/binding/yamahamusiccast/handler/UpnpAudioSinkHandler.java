@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2018 by the respective copyright holders.
+ * Copyright (c) 2010-2020 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.yamahamusiccast.handler;
 
@@ -81,13 +85,13 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
                         process(audioStream);
                         // } catch (IllegalStateException e) {
                         // logger.warn("Cannot play URI ({})", e.getMessage());
-                    } catch (UnsupportedAudioFormatException e1) {
-                        logger.debug(e1.toString());
-                    } catch (UnsupportedAudioStreamException e2) {
-                        logger.debug(e2.toString());
+                    } catch (UnsupportedAudioFormatException e) {
+                        logger.warn("Unsupported audio format: {}", e.toString());
+                    } catch (UnsupportedAudioStreamException e) {
+                        logger.warn("Unsupported audio stream: {}", e.toString());
                     }
                 } catch (AudioException e) {
-                    logger.debug(e.toString());
+                    logger.warn("Unhandled audio exception: {}", e.toString());
                 }
             } else {
                 logger.debug("Stop currently playing stream.");
@@ -147,19 +151,6 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
         }
     }
 
-    /*
-     * private void removeAllTracksFromQueue() {
-     * Map<String, String> inputs = new HashMap<>();
-     * inputs.put("InstanceID", "0");
-     *
-     * Map<String, String> result = service.invokeAction(this, "AVTransport", "RemoveAllTracksFromQueue", inputs);
-     *
-     * for (String variable : result.keySet()) {
-     * this.onValueReceived(variable, result.get(variable), "AVTransport");
-     * }
-     * }
-     */
-
     private void setCurrentURI(String uri, String uriMetaData) {
         if (uri != null && uriMetaData != null) {
             Map<String, String> inputs = new HashMap<>();
@@ -201,13 +192,6 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
             // stream.
             logger.debug("Stop currently playing stream.");
             stop();
-            /*
-             * if (audioStream instanceof URLAudioStream) {
-             * logger.debug("AudioStream it is an external URL, the speaker can access it itself and play it.");
-             * // it is an external URL, the speaker can access it itself and play it.
-             * URLAudioStream urlAudioStream = (URLAudioStream) audioStream;
-             * url = urlAudioStream.getURL();
-             */
         } else {
             if (callbackUrl != null) {
                 String relativeUrl;

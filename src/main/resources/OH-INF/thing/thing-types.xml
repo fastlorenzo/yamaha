@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <thing:thing-descriptions bindingId="yamahamusiccast"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
-	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
 	<thing-type id="speaker">
-		<label>YamahaMusicCast Speaker</label>
-		<description>A Yamaha MusicCast speaker (wx-030, ...) </description>
+		<label>Yamaha MusicCast Speaker</label>
+		<description>A Yamaha MusicCast speaker (WX-030, ...) </description>
 
 		<channels>
 			<channel id="zone" typeId="zone"/>
@@ -27,7 +27,7 @@
 			<parameter name="host" type="text" required="true">
 				<label>Host</label>
 				<default>192.168.2.x</default>
-				<description>YAMAHA MusicCast Device IP address</description>
+				<description>Yamaha MusicCast Device IP address</description>
 			</parameter>
 			<parameter name="refresh" type="integer" required="true" min="1">
 				<label>Refresh interval</label>
@@ -36,7 +36,7 @@
 			</parameter>
 			<parameter name="udn" type="text">
 				<label>Unique Device Name</label>
-				<description>The UDN identifies the yamaha musiccast speaker.</description>
+				<description>The UDN identifies the Yamaha MusicCast speaker.</description>
 				<advanced>true</advanced>
 			</parameter>
 		</config-description>

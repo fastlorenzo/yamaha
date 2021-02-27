@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <binding:binding id="yamahamusiccast" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:binding="http://eclipse.org/smarthome/schemas/binding/v1.0.0"
-	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/binding/v1.0.0 http://eclipse.org/smarthome/schemas/binding-1.0.0.xsd">
+	xmlns:binding="https://openhab.org/schemas/binding/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/binding/v1.0.0 https://openhab.org/schemas/binding-1.0.0.xsd">
 
-	<name>YamahaMusicCast Binding</name>
-	<description>This is the binding for YamahaMusicCast.</description>
-	<author>Original author: Frank Zimmer - Updates: Dries Decock, Hector Rodriguez</author>
+	<name>Yamaha MusicCast Binding</name>
+	<description>This is the binding for Yamaha MusicCast.</description>
+	<author>Original author: Frank Zimmer - Updates: Dries Decock, Hector Rodriguez, Lorenzo Bernardi</author>
 
 </binding:binding>
