@@ -78,7 +78,7 @@ public class MusicCastRequest<T> {
 
     private Map<String, String> requestHeaders = new HashMap<>();
 
-    private @Nullable Class<T> resultType;
+    private Class<T> resultType;
 
     // Public API
 
@@ -95,6 +95,7 @@ public class MusicCastRequest<T> {
         this.httpClient = httpClient;
         this.host = host;
         this.port = port;
+        this.resultType = (Class<T>) Object.class;
     }
 
     public void setPath(String path) {

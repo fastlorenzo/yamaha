@@ -190,7 +190,7 @@ public class YamahaMusicCastHandler extends UpnpAudioSinkHandler {
         } catch (MusicCastException e) {
             // TODO Auto-generated catch block
             // e.printStackTrace();
-            logger.debug(e.toString());
+            logger.debug(e.toString(), e);
         }
     }
 

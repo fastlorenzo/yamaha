@@ -46,8 +46,8 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
     private static final Set<Class<? extends AudioStream>> SUPPORTED_STREAMS = new HashSet<>();
 
     static {
-        SUPPORTED_FORMATS.add(AudioFormat.WAV);
         SUPPORTED_FORMATS.add(AudioFormat.MP3);
+        SUPPORTED_FORMATS.add(AudioFormat.WAV);
 
         SUPPORTED_STREAMS.add(AudioStream.class);
     }
@@ -74,7 +74,9 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
             if (url.startsWith("http")) {
                 try {
                     // playMedia(command.toString());
+
                     AudioStream audioStream = new URLAudioStream(url);
+                    logger.debug("Audio stream url: {}", url);
                     try {
                         process(audioStream);
                         // } catch (IllegalStateException e) {
@@ -103,8 +105,11 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
             url = "x-file-cifs:" + url;
         }
 
+        String uriMetaData = String.format(
+                "<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\"><item><upnp:class>object.item.audioItem.musicTrack</upnp:class><res duration=\"0:00:01.000\" size=\"1\">%s</res></item></DIDL-Lite>",
+                url);
         logger.debug("Calling set uri");
-        setCurrentURI(url, "");
+        setCurrentURI(url, uriMetaData);
 
         logger.debug("Calling play");
         play();
@@ -142,21 +147,23 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
         }
     }
 
-    private void removeAllTracksFromQueue() {
-        Map<String, String> inputs = new HashMap<>();
-        inputs.put("InstanceID", "0");
-
-        Map<String, String> result = service.invokeAction(this, "AVTransport", "RemoveAllTracksFromQueue", inputs);
-
-        for (String variable : result.keySet()) {
-            this.onValueReceived(variable, result.get(variable), "AVTransport");
-        }
-    }
+    /*
+     * private void removeAllTracksFromQueue() {
+     * Map<String, String> inputs = new HashMap<>();
+     * inputs.put("InstanceID", "0");
+     *
+     * Map<String, String> result = service.invokeAction(this, "AVTransport", "RemoveAllTracksFromQueue", inputs);
+     *
+     * for (String variable : result.keySet()) {
+     * this.onValueReceived(variable, result.get(variable), "AVTransport");
+     * }
+     * }
+     */
 
     private void setCurrentURI(String uri, String uriMetaData) {
         if (uri != null && uriMetaData != null) {
             Map<String, String> inputs = new HashMap<>();
-            logger.debug("Setting current uri");
+            logger.debug("Setting current uri to [{}] with metadata [{}]", uri, uriMetaData);
 
             try {
                 inputs.put("InstanceID", "0");
@@ -206,11 +213,14 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
                 String relativeUrl;
                 if (audioStream instanceof FixedLengthAudioStream) {
                     // we serve it on our own HTTP server
-                    relativeUrl = audioHTTPServer.serve((FixedLengthAudioStream) audioStream, 20);
+                    relativeUrl = audioHTTPServer.serve((FixedLengthAudioStream) audioStream, 30);
+                    logger.debug("stream is FixedLengthAudioStream");
                 } else {
                     relativeUrl = audioHTTPServer.serve(audioStream);
+                    logger.debug("stream is AudioStream");
                 }
                 url = callbackUrl + relativeUrl;
+                logger.debug("Callback URL is {}", url);
             } else {
                 logger.warn("We do not have any callback url, so yamaha speaker cannot play the audio stream!");
                 return;
@@ -226,7 +236,7 @@ public abstract class UpnpAudioSinkHandler extends BaseThingHandler implements A
 
     @Override
     public void onValueReceived(String variable, String value, String service) {
-        logger.debug("received variable {} with value {} from service {}", variable, value, service);
+        logger.debug("received variable [{}] with value [{}] from service [{}]", variable, value, service);
     }
 
     @Override
